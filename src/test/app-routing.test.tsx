@@ -14,4 +14,9 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
+
+  it("resolves the legacy express-shipping URL for existing orders", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    expect(router.matchRoutes("/expresso/legacy-order").at(-1)?.routeId).toBe("/expresso/$id");
+  });
 });

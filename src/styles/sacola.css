@@ -1,0 +1,378 @@
+
+  /* ---- tokens de movimento ----
+     Três velocidades e três curvas, e nada de número solto espalhado pela
+     folha: microinteração (botão, miniatura, ícone), componente (cartão,
+     etapa, colorway) e as duas animações grandes (troca de produto, entrar no
+     combo). O JS espelha os MESMOS milissegundos em MO — se mudar aqui,
+     mudar lá. "linear" não aparece em lugar nenhum: entrada desacelera,
+     saída acelera. */
+  /* Apontam para os tokens globais do BASE_CSS — os nomes --sac-* ficaram
+     porque a folha do carrinho inteira já os usa, mas o VALOR mora num lugar
+     só. Mudar a velocidade da loja muda a do carrinho junto. */
+  :root{
+    --sac-micro:var(--mo-micro);--sac-comp:var(--mo-comp);--sac-hero:var(--mo-hero);
+    --sac-ease-out:var(--ez-out);--sac-ease-in:var(--ez-in);--sac-ease:var(--ez);
+  }
+  .sac-scrim{position:fixed;inset:0;background:rgba(11,10,15,.5);z-index:90;
+    opacity:0;visibility:hidden;
+    transition:opacity var(--sac-comp) var(--sac-ease-out),visibility var(--sac-comp)}
+  .sac-scrim.on{opacity:1;visibility:visible}
+  .sac{position:fixed;top:0;right:0;bottom:0;z-index:91;width:100%;background:#fff;
+    display:flex;flex-direction:column;visibility:hidden;overflow:hidden;
+    transform:translate3d(100%,0,0);
+    transition:transform var(--sac-comp) var(--sac-ease),visibility var(--sac-comp),
+      max-width var(--sac-comp) var(--sac-ease);
+    box-shadow:-22px 0 60px -34px rgba(11,10,15,.75)}
+  .sac.on{transform:none;visibility:visible}
+  @media(min-width:760px){.sac{max-width:470px}.sac.larga{max-width:880px}}
+  /* Entrada escalonada: título, produto, preços, combo e CTA não chegam todos
+     no mesmo quadro. 40ms entre blocos — o suficiente pra leitura ter ordem,
+     curto o bastante pra ninguém esperar. Só na ABERTURA; repintar (mudar
+     quantidade, remover) não re-escalona, senão a sacola piscaria inteira a
+     cada clique. */
+  @keyframes sacEntra{from{opacity:0;transform:translate3d(0,8px,0)}to{opacity:1;transform:none}}
+  .sac-entra{animation:sacEntra var(--sac-comp) var(--sac-ease-out) backwards;
+    animation-delay:calc(var(--i,0)*40ms)}
+  /* ---- cabeçalho ---- */
+  .sac-hd{flex:none;display:flex;align-items:center;gap:12px;padding:16px 16px 14px;
+    border-bottom:1px solid var(--line)}
+  .sac.on .sac-hd{animation:sacEntra var(--sac-comp) var(--sac-ease-out) backwards}
+  .sac-hd h2{margin:0;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+  .sac-hd .n{font-size:11.5px;font-weight:700;color:#fff;background:var(--brand);
+    min-width:20px;height:20px;border-radius:999px;display:grid;place-items:center;padding:0 6px}
+  .sac-x{margin-left:auto;background:none;border:none;cursor:pointer;color:#6e6a78;
+    width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:26px;line-height:1}
+  .sac-x:hover{background:#f4f3f7;color:#0b0a0f}
+  /* ---- corpo ---- */
+  .sac-body{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    padding:14px 16px 20px;
+    transition:transform var(--sac-comp) var(--sac-ease),opacity var(--sac-comp) var(--sac-ease-in)}
+  /* Com o seletor aberto a sacola RECUA em vez de sumir por baixo: a pessoa
+     entende que continua dentro do carrinho, e não que trocou de página. */
+  .sac.escolhendo .sac-body,.sac.escolhendo .sac-ft{transform:translate3d(-20px,0,0);opacity:0}
+  .sac-vazio{text-align:center;padding:52px 10px}
+  .sac-vazio p{color:#6e6a78;margin:0 0 20px}
+  .sac-skel{height:92px;border-radius:14px;background:#f2f1f5;margin-bottom:12px}
+  /* ---- linha do produto ---- */
+  .sac-line{display:grid;grid-template-columns:78px minmax(0,1fr);gap:13px;
+    padding:14px 0;border-bottom:1px solid #f2f1f5}
+  .sac-line:first-child{padding-top:2px}
+  /* Produto que ACABOU de entrar. Uma vez, na primeira pintura em que ele
+     aparece — o idsAntes do JS é quem sabe disso. */
+  @keyframes sacLinhaEntra{
+    from{opacity:0;transform:translate3d(0,8px,0) scale(.94)}
+    to{opacity:1;transform:none}}
+  .sac-line.nova{animation:sacLinhaEntra 300ms var(--sac-ease-out) backwards}
+  /* Saída: o estado JÁ mudou (o par saiu do carrinho); isto é só o espaço se
+     fechando. height é animada de propósito — é uma sanfona, e não há
+     transform que feche o buraco de um item removido. */
+  .sac-line.saindo{overflow:hidden;
+    transition:height 280ms var(--sac-ease-in),opacity 200ms var(--sac-ease-in),
+      transform 280ms var(--sac-ease-in),padding 280ms var(--sac-ease-in);
+    opacity:0;transform:scale(.96);padding-top:0;padding-bottom:0}
+  .sac-line.trocando{transition:transform var(--sac-micro) var(--sac-ease-in),
+    opacity var(--sac-micro) var(--sac-ease-in);transform:translate3d(20px,0,0);opacity:0}
+  .sac-line img{width:78px;height:78px;border-radius:12px;object-fit:contain;background:#f6f5f8}
+  .sac-line .nm{font-size:14.5px;font-weight:600;line-height:1.3;color:#0b0a0f;
+    display:block;margin-bottom:3px}
+  .sac-line .meta{font-size:12.5px;color:#6e6a78;margin:0 0 7px}
+  .sac-line .pr{font-size:15px;font-weight:700;color:var(--comprar)}
+  .sac-line .pr s{font-size:12.5px;font-weight:500;color:#9a96a4;margin-left:7px}
+  .sac-line .acoes{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+  .sac-step{display:inline-flex;align-items:center;background:#f2f1f5;border-radius:999px}
+  .sac-step button{width:38px;height:38px;border:none;background:none;cursor:pointer;
+    font-size:18px;line-height:1;color:#3a3742;border-radius:999px}
+  .sac-step button:hover{background:#e7e5ec}
+  .sac-step button:disabled{opacity:.34;cursor:not-allowed}
+  .sac-step span{min-width:30px;text-align:center;font-size:14px;font-weight:700}
+  .sac-mini{background:none;border:none;padding:8px 2px;cursor:pointer;font:inherit;font-size:12.5px;
+    color:#6e6a78;text-decoration:underline;min-height:38px}
+  .sac-mini:hover{color:#0b0a0f}
+  .sac-mini.tro{color:var(--brand-d);font-weight:600}
+  /* ---- oferta: complete o combo ---- */
+  /* Cartão da marca, não "você também pode gostar": ele fala do par que a
+     pessoa ACABOU de escolher e do que falta pra fechar a promoção. */
+  /* A oferta não "aparece": ela se abre. O grid 0fr->1fr é a sanfona sem
+     animar height (o navegador resolve no compositor) e sem max-height
+     chutado, que corta o texto quando a fonte muda de tamanho. */
+  @keyframes sacAbre{
+    from{opacity:0;transform:translate3d(0,8px,0);grid-template-rows:0fr}
+    to{opacity:1;transform:none;grid-template-rows:1fr}}
+  .sac-of{margin:16px 0 4px;border:1.5px solid var(--brand);border-radius:16px;overflow:hidden;
+    background:var(--brand-soft);display:grid;grid-template-rows:1fr;
+    animation:sacAbre var(--sac-comp) var(--sac-ease-out) backwards}
+  .sac-of-tp{background:var(--brand);color:#fff;padding:10px 14px;font-size:12.5px;font-weight:800;
+    letter-spacing:.06em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .sac-of-in{padding:14px;min-width:0}
+  .sac-of-in h3{margin:0 0 6px;font-size:17px;line-height:1.25;color:#0b0a0f;letter-spacing:-.01em}
+  .sac-of-in h3 b{color:var(--brand-d)}
+  .sac-of-in p{margin:0 0 12px;font-size:13px;line-height:1.5;color:#4b4753}
+  .sac-of-eco{display:inline-flex;align-items:baseline;gap:8px;background:#fff;border-radius:10px;
+    padding:8px 12px;margin-bottom:13px;font-size:13px;font-weight:700;color:var(--comprar)}
+  .sac-of-eco s{color:#9a96a4;font-weight:500}
+  /* ---- combo fechado ---- */
+  .sac-ok{margin:16px 0 4px;border:1.5px solid var(--comprar);border-radius:16px;background:#f2fbf5;
+    padding:13px 14px}
+  .sac-ok-tt{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;
+    color:var(--comprar-d);letter-spacing:.02em}
+  .sac-ok-tt svg{width:17px;height:17px}
+  .sac-ok p{margin:7px 0 0;font-size:13px;color:#3a5a45;line-height:1.5}
+  .sac-ok p b{color:#1d4630}
+  /* Sucesso: o cartão cresce um fio, um brilho discreto passa uma vez e o
+     check se DESENHA. Sem confete, sem loop — 460ms e acabou. */
+  .sac-ok.pisca{animation:sacOk 460ms var(--sac-ease-out) 1}
+  @keyframes sacOk{
+    0%{transform:scale(.975);box-shadow:0 0 0 0 rgba(30,158,79,.35);background:#e9f7ee}
+    60%{box-shadow:0 0 0 9px rgba(30,158,79,0)}
+    100%{transform:none;background:#f2fbf5}}
+  .sac-tick{width:17px;height:17px;flex:none}
+  .sac-tick path{stroke-dasharray:26;stroke-dashoffset:0}
+  .sac-ok.pisca .sac-tick path{animation:sacTick 420ms var(--sac-ease-out) 60ms backwards}
+  @keyframes sacTick{from{stroke-dashoffset:26}to{stroke-dashoffset:0}}
+  /* ---- SEU DROP: os pares como um conjunto, não como uma lista ---- */
+  .sac-drop{margin:11px 0 9px;padding:12px 10px 10px;border-radius:13px;
+    background:linear-gradient(180deg,#fff,#f4faf6);border:1px solid #dcefe3}
+  .sac-drop-tt{display:block;text-align:center;font-size:10px;font-weight:800;
+    letter-spacing:.18em;color:#6f8c7c;margin-bottom:9px}
+  .sac-drop-fotos{display:flex;align-items:center;justify-content:center;gap:6px}
+  .sac-drop-fotos img{width:74px;aspect-ratio:1;object-fit:contain;background:#fff;
+    border-radius:10px;padding:3px;transform:rotate(var(--r,0deg));
+    box-shadow:0 10px 18px -12px rgba(11,10,15,.55);
+    animation:sacDropEntra 420ms var(--sac-ease-out) backwards;
+    animation-delay:calc(var(--d,0)*70ms)}
+  @keyframes sacDropEntra{
+    from{opacity:0;transform:rotate(0deg) translate3d(0,8px,0) scale(.92)}
+    to{opacity:1;transform:rotate(var(--r,0deg))}}
+  .sac-drop-sinal{font-size:15px;font-weight:800;color:#9bb3a6;flex:none}
+  /* ---- rodapé: totais e CTA ---- */
+  .sac-ft{flex:none;border-top:1px solid var(--line);background:#fff;
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 24px -22px rgba(11,10,15,.6)}
+  .sac-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    font-size:13.5px;color:#4b4753;margin-bottom:7px}
+  .sac-row .desc{color:var(--brand-d);font-weight:600}
+  .sac-row.tot{font-size:16px;font-weight:700;color:#0b0a0f;margin:10px 0 12px}
+  .sac-row.tot b{font-size:23px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .sac-row.tot b{display:inline-block;position:relative;overflow:hidden}
+  .sac-row.tot b.up{animation:sacUp 420ms var(--sac-ease-out) 1}
+  @keyframes sacUp{0%{transform:scale(1);color:#0b0a0f}
+    45%{transform:scale(1.05);color:var(--comprar)}100%{transform:scale(1);color:#0b0a0f}}
+  /* Brilho: passa UMA vez quando o número chega no valor novo. */
+  .sac-row.tot b.up::after{content:'';position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(105deg,transparent 38%,rgba(255,255,255,.75) 50%,transparent 62%);
+    transform:translateX(-120%);animation:sacBrilho 520ms var(--sac-ease-out) 120ms 1}
+  @keyframes sacBrilho{to{transform:translateX(120%)}}
+  .sac-go{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+    border:none;cursor:pointer;font:inherit;font-weight:800;font-size:15px;letter-spacing:.03em;
+    border-radius:999px;padding:17px 18px;background:var(--acao);color:#fff;
+    transition:background var(--sac-micro) ease,transform 120ms var(--sac-ease-out)}
+  .sac-go:hover{background:var(--acao-h);text-decoration:none}
+  /* Mobile não tem hover: o feedback é a pressão do toque. */
+  .sac-go:active{transform:scale(.98)}
+  /* A seta anda 4px no hover — o único enfeite de um botão que precisa ser
+     lido como "o caminho é por aqui". */
+  .sac-ar{display:inline-block;transition:transform var(--sac-micro) var(--sac-ease-out)}
+  .sac-go:hover .sac-ar{transform:translateX(4px)}
+  .sac-go.indo{pointer-events:none}
+  .sac-spin{width:15px;height:15px;border-radius:50%;flex:none;
+    border:2px solid rgba(255,255,255,.35);border-top-color:currentColor;
+    animation:sacSpin .7s linear infinite}
+  @keyframes sacSpin{to{transform:rotate(360deg)}}
+  .sac-frete{display:flex;align-items:center;justify-content:center;gap:7px;margin:10px 0 0;
+    font-size:12.5px;font-weight:600;color:#3a3742}
+  .sac-frete svg{width:16px;height:16px;color:var(--comprar)}
+  .sac-seg{display:flex;align-items:center;justify-content:center;gap:7px;margin:8px 0 0;
+    font-size:12px;color:#8b8794}
+  .sac-seg svg{width:14px;height:14px}
+  /* Pulo único do ícone da sacola quando um par entra. 1 -> 1,12 -> 1, uma
+     vez: a classe é removida no fim, então ele nunca fica pulando. */
+  .ico.bag.pop{animation:sacPop 380ms var(--sac-ease-out) 1}
+  @keyframes sacPop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+  .ico.bag.pop b{animation:sacPop 380ms var(--sac-ease-out) 60ms 1}
+  /* ---- foto que voa até a sacola (feedback do "adicionar") ---- */
+  .sac-fly{position:fixed;z-index:95;pointer-events:none;border-radius:14px;object-fit:contain;
+    background:#fff;box-shadow:0 18px 40px -20px rgba(11,10,15,.6);
+    transition:transform 380ms var(--sac-ease),opacity 380ms var(--sac-ease-in)}
+  /* ======================= ESCOLHA DO 2º PAR ======================= */
+  /* Painel que desliza POR CIMA do carrinho, dentro do mesmo drawer: a pessoa
+     não sai da sacola nem troca de página pra escolher o par. */
+  .sac-sel{position:absolute;inset:0;z-index:2;background:#fff;display:flex;flex-direction:column;
+    transform:translate3d(100%,0,0);visibility:hidden;
+    transition:transform .3s cubic-bezier(.22,.61,.36,1),visibility .3s}
+  .sac-sel.on{transform:none;visibility:visible}
+  .sac-sel-hd{flex:none;display:flex;align-items:center;gap:10px;padding:12px 14px;
+    border-bottom:1px solid var(--line)}
+  .sac-back{background:none;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;
+    color:#0b0a0f;min-width:44px;height:44px;display:grid;place-items:center;font-size:20px;line-height:1}
+  .sac-back:hover{border-color:#0b0a0f}
+  .sac-sel-hd .tt{min-width:0}
+  .sac-sel-hd .tt b{display:block;font-size:15px;line-height:1.2;letter-spacing:-.01em}
+  .sac-sel-hd .tt i{display:block;font-style:normal;font-size:11.5px;color:#8b8794;
+    letter-spacing:.08em;text-transform:uppercase;margin-top:2px}
+  .sac-sel-body{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px}
+  /* Etapa saindo e etapa entrando, no mesmo eixo do seletor: recua e some,
+     a nova chega de fora. 140 + 300ms — a troca é sentida, não esperada. */
+  .sac-sel-body.sai{transition:transform 140ms var(--sac-ease-in),opacity 140ms var(--sac-ease-in);
+    transform:translate3d(-20px,0,0);opacity:0}
+  @keyframes sacPassoEntra{
+    from{opacity:0;transform:translate3d(25px,0,0)}to{opacity:1;transform:none}}
+  .sac-sel-body.entra{animation:sacPassoEntra 320ms var(--sac-ease-out) backwards}
+  /* passos: MODELO > COR > TAMANHO */
+  .sac-passos{display:flex;align-items:center;gap:7px;margin:0 0 14px;font-size:11px;
+    letter-spacing:.09em;text-transform:uppercase;color:#a7a3b0;font-weight:700;flex-wrap:wrap}
+  .sac-passos b{color:#0b0a0f}
+  .sac-passos .fez{color:var(--comprar)}
+  /* busca e filtros */
+  .sac-busca{position:relative;margin-bottom:12px}
+  .sac-busca input{height:48px;padding-left:42px;font-size:15px}
+  .sac-busca svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;color:#a7a3b0}
+  .sac-chips{display:flex;gap:8px;overflow-x:auto;padding:0 0 12px;margin:0 -14px 2px;
+    padding-left:14px;padding-right:14px;scrollbar-width:none}
+  .sac-chips::-webkit-scrollbar{display:none}
+  .sac-chip{flex:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;
+    padding:0 15px;height:40px;font:inherit;font-size:13px;font-weight:600;color:#3a3742;cursor:pointer;
+    white-space:nowrap}
+  .sac-chip:hover{border-color:#0b0a0f}
+  .sac-chip.on{background:#0b0a0f;border-color:#0b0a0f;color:#fff}
+  /* grade de modelos */
+  .sac-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(min-width:760px){.sac.larga .sac-grid{grid-template-columns:repeat(3,1fr)}}
+  .sac-card{border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:9px;
+    cursor:pointer;text-align:left;font:inherit;display:flex;flex-direction:column;gap:7px;
+    transition:border-color .18s ease,transform .18s ease}
+  .sac-card:hover{border-color:#0b0a0f;transform:translateY(-2px)}
+  .sac-card:active{transform:scale(.975);transition-duration:90ms}
+  .sac-card img{transition:transform var(--sac-comp) var(--sac-ease-out)}
+  .sac-card:hover img{transform:scale(1.035)}
+  .sac-card img{width:100%;aspect-ratio:1;object-fit:contain;background:#f6f5f8;border-radius:10px}
+  .sac-card .nm{font-size:13.5px;font-weight:600;line-height:1.25;color:#0b0a0f}
+  .sac-card .qt{font-size:11.5px;color:#6e6a78}
+  .sac-card .mk{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#a7a3b0;font-weight:700}
+  /* ---- etapa 2: cores, com a foto real ---- */
+  .sac-pv{background:#f6f5f8;border-radius:16px;padding:12px 12px 6px;margin-bottom:14px;
+    display:grid;place-items:center;perspective:900px}
+  /* O palco é o que inclina com o mouse (3,5 graus em X, 5,5 em Y — limites do
+     briefing). A FOTO por dentro é quem gira na troca de cor. Dois elementos
+     porque as duas coisas podem acontecer ao mesmo tempo, e um transform só
+     não empilha. */
+  .sac-pv-palco{width:100%;display:grid;place-items:center;transform-style:preserve-3d}
+  .sac-pv-palco.volta{transition:transform var(--sac-comp) var(--sac-ease-out)}
+  .sac-pv img{width:100%;max-width:330px;aspect-ratio:1;object-fit:contain;
+    transition:transform 300ms var(--sac-ease),opacity 260ms var(--sac-ease-in)}
+  /* Entrada do produto quando o MODELO muda: chega girando, 480ms. */
+  @keyframes sacProdEntra{
+    from{opacity:0;transform:rotateY(-16deg) scale(.95) translate3d(0,6px,0)}
+    to{opacity:1;transform:none}}
+  .sac-pv img.chega{animation:sacProdEntra 480ms var(--sac-ease-out) backwards}
+  /* Troca de colorway: sai girando 8 graus para um lado, a nova entra do outro. */
+  .sac-pv img.sai{transform:rotateY(8deg) scale(.97);opacity:0}
+  .sac-pv img.entra{transform:rotateY(-8deg) scale(.97);opacity:0}
+  /* Sombra no chão: encolhe enquanto o tênis está "no ar" e volta quando o
+     novo chega. É ela que faz a troca parecer física em vez de um fade. */
+  .sac-pv-sombra{display:block;width:62%;height:13px;margin-top:6px;border-radius:50%;
+    background:radial-gradient(ellipse at center,rgba(11,10,15,.28),rgba(11,10,15,0) 70%);
+    transition:transform 300ms var(--sac-ease),opacity 300ms var(--sac-ease)}
+  .sac-pv-palco.trocando .sac-pv-sombra{transform:scaleX(.72) scaleY(.8);opacity:.45}
+  .sac-cor-nm{text-align:center;font-size:13.5px;font-weight:600;margin:-6px 0 4px;color:#0b0a0f}
+  .sac-dica{text-align:center;font-size:11.5px;color:#8b8794;margin:0 0 14px}
+  .sac-cores{display:grid;grid-template-columns:repeat(auto-fill,minmax(74px,1fr));gap:10px}
+  .sac-cor{position:relative;border:2px solid var(--line);border-radius:12px;background:#fff;
+    padding:4px;cursor:pointer;font:inherit;
+    transition:border-color var(--sac-micro) ease,transform var(--sac-micro) var(--sac-ease-out),
+      box-shadow var(--sac-micro) ease}
+  .sac-cor:hover{border-color:#8b8794;transform:translateY(-2px)}
+  .sac-cor:active{transform:scale(.97);transition-duration:90ms}
+  .sac-cor.on{border-color:#0b0a0f;transform:translateY(-2px) scale(1.02);
+    box-shadow:0 10px 18px -12px rgba(11,10,15,.6)}
+  /* Indicador de selecionada: um ponto que cresce no canto. */
+  .sac-cor.on::after{content:'';position:absolute;top:-5px;right:-5px;width:16px;height:16px;
+    border-radius:50%;background:#0b0a0f;border:2px solid #fff;
+    animation:sacPonto var(--sac-micro) var(--sac-ease-out) backwards}
+  @keyframes sacPonto{from{transform:scale(0)}to{transform:none}}
+  .sac-cor img{width:100%;aspect-ratio:1;object-fit:contain;background:#f6f5f8;border-radius:8px}
+  /* Duas linhas, não uma com reticências: metade das colorways desta loja
+     começa igual ("Delux Black Gum", "Delux Black Tiffany") e cortar na
+     primeira palavra deixava seis miniaturas com a MESMA legenda. */
+  .sac-cor i{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+    font-style:normal;font-size:10.5px;line-height:1.25;color:#4b4753;
+    margin-top:4px;text-align:center;overflow:hidden;min-height:26px}
+  .sac-mais{width:100%;margin-top:12px;border:1.5px solid var(--line);background:#fff;border-radius:999px;
+    height:46px;font:inherit;font-weight:700;font-size:13.5px;cursor:pointer;color:#0b0a0f}
+  .sac-mais:hover{border-color:#0b0a0f}
+  /* ---- etapa 3: numeração ---- */
+  .sac-lbl{font-size:13px;font-weight:700;margin:18px 0 9px;color:#0b0a0f}
+  .sac-lbl span{font-weight:500;color:#8b8794}
+  .sac-sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:9px}
+  .sac-sz{position:relative;min-height:50px;border:1.5px solid #d3d0db;background:#fff;
+    border-radius:12px;font:inherit;font-size:15px;font-weight:700;color:#0b0a0f;cursor:pointer;
+    transition:border-color var(--sac-micro) ease,background var(--sac-micro) ease,
+      transform var(--sac-micro) var(--sac-ease-out)}
+  .sac-sz:hover:not(:disabled){border-color:#0b0a0f}
+  .sac-sz.on{border-color:#0b0a0f;border-width:2.5px;background:#f0eff3}
+  /* 1 -> 0,94 -> 1 no toque. Keyframe, e não :active, porque no celular o
+     :active some no instante em que o dedo levanta e ninguém vê nada. */
+  .sac-sz.toque{animation:sacToque 180ms var(--sac-ease-out) 1}
+  @keyframes sacToque{0%{transform:scale(1)}45%{transform:scale(.94)}100%{transform:scale(1)}}
+  /* Numeração esgotada não reage a nada: sem hover, sem toque, sem cursor. */
+  .sac-sz:disabled{opacity:.32;cursor:not-allowed;text-decoration:line-through;
+    transform:none!important;animation:none!important}
+  /* ---- resumo antes de adicionar ---- */
+  .sac-conf{flex:none;border-top:1px solid var(--line);background:#fff;
+    padding:12px 14px calc(12px + env(safe-area-inset-bottom))}
+  .sac-conf-in{display:grid;grid-template-columns:56px minmax(0,1fr);gap:11px;align-items:center;
+    margin-bottom:11px}
+  .sac-conf-in img{width:56px;height:56px;border-radius:10px;object-fit:contain;background:#f6f5f8}
+  .sac-conf-in b{display:block;font-size:14px;line-height:1.25}
+  .sac-conf-in i{display:block;font-style:normal;font-size:12.5px;color:#6e6a78;margin-top:2px}
+  .sac-conf-pr{font-size:12.5px;color:#6e6a78;margin-top:4px}
+  .sac-conf-pr s{margin-right:7px}
+  .sac-conf-pr b{display:inline;color:var(--comprar);font-weight:800}
+  .sac-add{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;border:none;
+    cursor:pointer;font:inherit;font-weight:800;font-size:15px;letter-spacing:.03em;
+    border-radius:999px;padding:17px 18px;background:var(--acao);color:#fff;
+    transition:background var(--sac-comp) ease,color var(--sac-comp) ease,
+      transform 120ms var(--sac-ease-out)}
+  .sac-add:hover:not(:disabled){background:var(--acao-h)}
+  .sac-add:active:not(:disabled){transform:scale(.98)}
+  .sac-add:disabled{background:#e7e5ec;color:#9a96a4;cursor:not-allowed}
+  .sac-add:hover:not(:disabled) .sac-ar{transform:translateX(4px)}
+  /* A seta só existe quando o botão está pronto pra ser clicado: ela é o
+     aviso de que modelo, cor, numeração e estoque fecharam. */
+  .sac-add:disabled .sac-ar{opacity:0;transform:translateX(-6px)}
+  .sac-add .sac-ar{transition:opacity var(--sac-comp) var(--sac-ease-out),
+    transform var(--sac-comp) var(--sac-ease-out)}
+  /* Uma vez, no instante em que liga. Não pulsa depois disso. */
+  .sac-add.ligou{animation:sacLiga 420ms var(--sac-ease-out) 1}
+  @keyframes sacLiga{0%{transform:scale(.985)}50%{transform:scale(1.012)}100%{transform:none}}
+  .sac-aviso{margin:0;padding:22px 2px;color:#6e6a78;font-size:13.5px}
+  /* Acessibilidade: foco visível em tudo que se clica dentro do painel. */
+  .sac :focus-visible,.sac-x:focus-visible{outline:2.5px solid var(--brand);outline-offset:2px}
+  /* No celular o movimento é menor: a tela é menor, a mão está em cima do
+     conteúdo e o mesmo deslocamento que no desktop parece elegante ali vira
+     tranco. Corta pela metade e deixa de inclinar. */
+  @media(max-width:759px){
+    :root{--sac-comp:320ms;--sac-hero:460ms}
+    .sac-pv-palco{transform:none!important}
+    .sac.escolhendo .sac-body,.sac.escolhendo .sac-ft{transform:translate3d(-10px,0,0)}
+    .sac-sel-body.sai{transform:translate3d(-12px,0,0)}
+    @keyframes sacPassoEntra{
+      from{opacity:0;transform:translate3d(14px,0,0)}to{opacity:1;transform:none}}
+  }
+  /* Quem pediu menos movimento recebe o MESMO carrinho, com as mesmas etapas e
+     os mesmos botões: o que sai é o movimento, não a função. Sem rotação, sem
+     3D, sem deslocamento grande — só opacidade, e o resto é instantâneo. */
+  @media(prefers-reduced-motion:reduce){
+    .sac,.sac-scrim,.sac-sel,.sac-pv img,.sac-fly,.sac-card,.sac-cor,.sac-sz,
+    .sac-body,.sac-ft,.sac-go,.sac-add,.sac-pv-sombra{transition-duration:1ms!important}
+    .sac-entra,.sac-line.nova,.sac-ok.pisca,.sac-row.tot b.up,.sac-row.tot b.up::after,
+    .sac-of,.sac-sel-body.entra,.sac-drop-fotos img,.sac-add.ligou,.sac-sz.toque,
+    .sac-cor.on::after,.sac.on .sac-hd,.sac-ok.pisca .sac-tick path,.sac-pv img.chega,
+    .ico.bag.pop,.ico.bag.pop b{animation:none!important}
+    .sac-pv img.sai,.sac-pv img.entra{transform:none;opacity:1}
+    .sac-pv-palco{transform:none!important}
+    .sac.escolhendo .sac-body,.sac.escolhendo .sac-ft{transform:none}
+    .sac-cor.on,.sac-card:hover{transform:none}
+    /* o giro do carregando é o único movimento que sobra, e ele é informação */
+    .sac-spin{animation-duration:1.2s}
+  }

@@ -1,5 +1,5 @@
 import home from "@/data/home.json";
-import { brl, PRECO_DUPLA, PRECO_PAR } from "@/lib/produtos";
+import { money as moneyPromo, precoPromo } from "@/lib/promo";
 
 export interface HomeVariant {
   id: string;
@@ -53,15 +53,15 @@ export const HERO_HANDLE = "tesla-coil-pro-preto-refletivo";
 export const HERO_TITULO = "Tesla Coil Pro Preto Refletivo";
 
 export function money(cents: number): string {
-  return `R$ ${brl(cents)}`;
+  return moneyPromo(cents);
 }
 
 export function precoPar(): string {
-  return brl(PRECO_PAR);
+  return precoPromo().unit;
 }
 
 export function precoDupla(): string {
-  return brl(PRECO_DUPLA);
+  return precoPromo().dupla;
 }
 
 /** Desconto % a partir do compareCents da 1ª variante. */

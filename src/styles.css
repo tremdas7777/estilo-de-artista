@@ -2,6 +2,7 @@
 @source "../src";
 @import "tw-animate-css";
 @import "./styles/loja.css";
+@import "./styles/pdp.css";
 
 @custom-variant dark (&:is(.dark *));
 

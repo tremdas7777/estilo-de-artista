@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import { HERO_HANDLE, HERO_TITULO, LOJA_NOME, precoDupla } from "@/lib/home";
+import { HERO_HANDLE, HERO_TITULO, LOJA_NOME } from "@/lib/home";
+import { precoPromo } from "@/lib/promo";
 
 /** Hero preto com headline, oferta e par Tesla Coil Pro. */
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const palcoRef = useRef<HTMLDivElement>(null);
+  const promo = precoPromo();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -87,7 +89,7 @@ export function Hero() {
 
         <p className="hero-of">
           <span className="n">
-            2 pares por <b>R$&nbsp;{precoDupla()}</b>
+            {promo.minQty} pares por <b>R$&nbsp;{promo.dupla}</b>
           </span>
           <span className="f">Frete grátis</span>
         </p>

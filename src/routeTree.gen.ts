@@ -10,12 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CarrinhoRouteImport } from './routes/carrinho'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ColecaoHandleRouteImport } from './routes/colecao.$handle'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarrinhoRoute = CarrinhoRouteImport.update({
+  id: '/carrinho',
+  path: '/carrinho',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ColecaoHandleRoute = ColecaoHandleRouteImport.update({
@@ -31,30 +43,45 @@ const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
   '/colecao/$handle': typeof ColecaoHandleRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
   '/colecao/$handle': typeof ColecaoHandleRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/carrinho': typeof CarrinhoRoute
+  '/checkout': typeof CheckoutRoute
   '/colecao/$handle': typeof ColecaoHandleRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/colecao/$handle' | '/produto/$handle'
+  fullPaths:
+    '/' | '/carrinho' | '/checkout' | '/colecao/$handle' | '/produto/$handle'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/colecao/$handle' | '/produto/$handle'
-  id: '__root__' | '/' | '/colecao/$handle' | '/produto/$handle'
+  to: '/' | '/carrinho' | '/checkout' | '/colecao/$handle' | '/produto/$handle'
+  id:
+    | '__root__'
+    | '/'
+    | '/carrinho'
+    | '/checkout'
+    | '/colecao/$handle'
+    | '/produto/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CarrinhoRoute: typeof CarrinhoRoute
+  CheckoutRoute: typeof CheckoutRoute
   ColecaoHandleRoute: typeof ColecaoHandleRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
 }
@@ -66,6 +93,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carrinho': {
+      id: '/carrinho'
+      path: '/carrinho'
+      fullPath: '/carrinho'
+      preLoaderRoute: typeof CarrinhoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/colecao/$handle': {
@@ -87,6 +128,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CarrinhoRoute: CarrinhoRoute,
+  CheckoutRoute: CheckoutRoute,
   ColecaoHandleRoute: ColecaoHandleRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,
 }

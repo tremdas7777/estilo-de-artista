@@ -10,8 +10,10 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
-import appCss from "../styles.css?url";
+import { Sacola } from "@/components/sacola";
+import { CartProvider } from "@/lib/cart";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import appCss from "../styles.css?url";
 
 function NotFoundComponent() {
   return (
@@ -114,8 +116,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <CartProvider>
+        <Outlet />
+        <Sacola />
+      </CartProvider>
     </QueryClientProvider>
   );
 }

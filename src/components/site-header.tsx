@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { IconCart, IconSearch } from "@/components/icons";
+import { useCart } from "@/lib/cart";
 import type { HomeMenuItem } from "@/lib/home";
 
 interface Props {
@@ -16,6 +17,7 @@ export function SiteHeader({ menu, overHero = false }: Props) {
   const [buscaAberta, setBuscaAberta] = useState(false);
   const [abertos, setAbertos] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
+  const cart = useCart();
 
   useEffect(() => {
     const medir = () => {
@@ -119,9 +121,15 @@ export function SiteHeader({ menu, overHero = false }: Props) {
           >
             <IconSearch />
           </button>
-          <button type="button" className="ico bag" aria-label="Abrir o carrinho">
+          <button
+            type="button"
+            className="ico bag"
+            aria-label="Abrir o carrinho"
+            aria-expanded={cart.open}
+            onClick={() => cart.setOpen(true)}
+          >
             <IconCart />
-            <b>0</b>
+            <b className={cart.count > 0 ? "on" : undefined}>{cart.count}</b>
             <span>Carrinho</span>
           </button>
         </div>

@@ -22,6 +22,9 @@
   --acao-h: #262626;
   --promo: #dc2626;
   --volt: #d5e607;
+  --green: #1e9e4f;
+  --comprar: #1e9e4f;
+  --comprar-d: #188542;
   --radius: 10px;
 }
 
@@ -1395,85 +1398,3 @@
   }
 }
 
-.pdp {
-  display: grid;
-  gap: 22px;
-}
-
-@media (min-width: 900px) {
-  .pdp {
-    grid-template-columns: 1.1fr 1fr;
-    gap: 40px;
-    align-items: start;
-  }
-}
-
-.pdp-img {
-  border-radius: 12px;
-  overflow: hidden;
-  background: var(--tile);
-}
-
-.pdp-img img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: contain;
-}
-
-.pdp h1 {
-  font-size: 26px;
-  margin: 0 0 10px;
-  font-weight: 700;
-}
-
-.pdp .price {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.pdp .btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: none;
-  cursor: pointer;
-  font: inherit;
-  font-weight: 500;
-  border-radius: 999px;
-  padding: 14px 24px;
-  background: var(--acao);
-  color: #fff;
-  width: 100%;
-  font-size: 15px;
-  margin-top: 18px;
-}
-
-.pdp .btn:hover {
-  background: var(--acao-h);
-}
-
-.sizes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.sizes button {
-  min-width: 48px;
-  height: 44px;
-  border: 1.5px solid var(--line);
-  border-radius: 10px;
-  background: #fff;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.sizes button.on {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: #fff;
-}

@@ -1,8 +1,9 @@
 import { IconLock, IconShield, IconTag, IconTruck } from "@/components/icons";
-import { precoDupla, precoPar } from "@/lib/home";
+import { precoPromo } from "@/lib/promo";
 
 /** Faixa de confiança logo abaixo do hero. */
 export function Selos() {
+  const promo = precoPromo();
   return (
     <section className="icons">
       <div className="ic">
@@ -10,8 +11,10 @@ export function Selos() {
           <IconTag />
         </div>
         <div>
-          <b>1 par R$ {precoPar()}</b>
-          <span>2 pares R$ {precoDupla()}</span>
+          <b>1 par R$ {promo.unit}</b>
+          <span>
+            {promo.minQty} pares R$ {promo.dupla}
+          </span>
         </div>
       </div>
       <div className="ic">

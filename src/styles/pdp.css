@@ -1,0 +1,256 @@
+
+  /* ===================== PÁGINA DE PRODUTO =====================
+     Duas colunas no computador: o PALCO do produto ocupa ~57% e fica grudado
+     enquanto a coluna de compra rola. No celular vira uma coluna só, e a ordem
+     do HTML já é a da leitura: produto, nome, preço, cor, numeração, CTA. */
+  .pdp{display:grid;gap:22px;padding:0 0 10px;align-items:start}
+  @media(min-width:1000px){
+    .pdp{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:40px}
+    .pdp-palco{position:sticky;top:calc(var(--hdr-h) + 14px)}
+  }
+  /* ---- palco: galeria + giro ---- */
+  .pdp-stage{position:relative;border-radius:20px;overflow:hidden;background:#f4f3f7;
+    border:1px solid var(--line)}
+  .pdp-trilho{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;
+    scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;
+    cursor:grab}
+  .pdp-trilho::-webkit-scrollbar{display:none}
+  .pdp-trilho.arrastando{cursor:grabbing;scroll-snap-type:none}
+  .pdp-slide{flex:0 0 100%;min-width:0;scroll-snap-align:center;aspect-ratio:1;
+    display:grid;place-items:center;background:#fff}
+  .pdp-slide img{width:100%;height:100%;object-fit:contain;display:block;
+    /* a foto entra quando carrega, em vez de aparecer de supetão */
+    opacity:0;transition:opacity var(--mo-comp) var(--ez-out)}
+  .pdp-slide img.veio{opacity:1}
+  /* contador discreto no canto — substitui setas enormes */
+  .pdp-conta{position:absolute;right:12px;bottom:12px;z-index:3;
+    background:rgba(11,10,15,.68);color:#fff;font-size:11.5px;font-weight:700;
+    letter-spacing:.06em;padding:6px 11px;border-radius:999px;
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+  .pdp-zoom{position:absolute;left:12px;bottom:12px;z-index:3;width:38px;height:38px;
+    border-radius:999px;border:none;cursor:pointer;display:grid;place-items:center;
+    background:rgba(11,10,15,.68);color:#fff;
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    transition:background var(--mo-micro) ease,transform var(--mo-micro) var(--ez-out)}
+  .pdp-zoom:hover{background:#0b0a0f;transform:scale(1.06)}
+  .pdp-zoom svg{width:18px;height:18px}
+  /* ---- giro: fica POR CIMA da galeria, no mesmo palco ---- */
+  .pdp-giro{position:absolute;inset:0;z-index:4;background:#fff;
+    display:grid;place-items:center;
+    /* pan-y: o arrasto horizontal é nosso (gira o tênis), o vertical continua
+       sendo da página — no celular a pessoa precisa conseguir rolar com o dedo
+       em cima da foto. */
+    touch-action:pan-y;cursor:ew-resize;
+    opacity:0;visibility:hidden;transition:opacity var(--mo-comp) var(--ez-out),visibility var(--mo-comp)}
+  .pdp-giro.on{opacity:1;visibility:visible}
+  .pdp-giro img{width:100%;height:100%;object-fit:contain;display:block;-webkit-user-drag:none;user-select:none}
+  .pdp-giro-dica{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
+    display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+    background:rgba(11,10,15,.72);color:#fff;font-size:12px;font-weight:600;
+    padding:8px 14px;border-radius:999px;pointer-events:none;
+    transition:opacity var(--mo-comp) var(--ez-out)}
+  .pdp-giro-dica.some{opacity:0}
+  .pdp-giro-barra{position:absolute;left:14px;right:14px;bottom:0;height:3px;border-radius:999px;
+    background:rgba(11,10,15,.12);overflow:hidden}
+  .pdp-giro-barra i{display:block;height:100%;background:var(--brand);width:0%;
+    transition:width .2s linear}
+  /* ---- alternador fotos / girar ---- */
+  .pdp-modos{display:flex;gap:8px;margin:12px 0 0}
+  .pdp-modo{flex:1;min-height:44px;border:1.5px solid var(--line);background:#fff;border-radius:12px;
+    font:inherit;font-size:13px;font-weight:700;color:#3a3742;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    transition:border-color var(--mo-micro) ease,background var(--mo-micro) ease,color var(--mo-micro) ease}
+  .pdp-modo:hover{border-color:#0b0a0f}
+  .pdp-modo.on{background:#0b0a0f;border-color:#0b0a0f;color:#fff}
+  .pdp-modo svg{width:16px;height:16px}
+  /* ---- miniaturas ---- */
+  .pdp-thumbs{display:flex;gap:9px;overflow-x:auto;margin:11px 0 0;padding-bottom:4px;
+    scrollbar-width:none}
+  .pdp-thumbs::-webkit-scrollbar{display:none}
+  .pdp-thumb{flex:0 0 70px;aspect-ratio:1;border:2px solid var(--line);border-radius:12px;
+    background:#fff;padding:3px;cursor:pointer;
+    transition:border-color var(--mo-micro) ease,transform var(--mo-micro) var(--ez-out)}
+  .pdp-thumb:hover{transform:translateY(-2px)}
+  .pdp-thumb.on{border-color:#0b0a0f}
+  .pdp-thumb img{width:100%;height:100%;object-fit:contain;display:block;border-radius:8px}
+  /* ---- coluna de compra ---- */
+  .pdp-info{min-width:0}
+  .pdp-marca{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--brand);margin:0 0 8px}
+  .pdp-info h1{font-size:clamp(22px,5.2vw,32px);line-height:1.12;margin:0 0 8px;
+    letter-spacing:-.02em;font-weight:700}
+  .pdp-meta{font-size:12.5px;color:#6e6a78;margin:0 0 16px}
+  .pdp-meta .stock{color:var(--comprar);font-weight:600}
+  .pdp-meta .out{color:#c2334d;font-weight:600}
+  /* preço */
+  .pdp-preco{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 4px}
+  .pdp-preco b{font-size:clamp(26px,6.5vw,34px);font-weight:600;color:var(--ink);
+    letter-spacing:-.03em;line-height:1}
+  .pdp-preco s{color:#9a96a4;font-size:15px}
+  .pdp-preco .off{background:var(--promo);color:#fff;font-size:12px;
+    font-weight:600;padding:4px 9px;border-radius:999px}
+  .pdp-pix{font-size:13px;color:#6e6a78;margin:0 0 14px}
+  .pdp-pix b{color:#0b0a0f}
+  /* faixa da promoção, com os números vindos de config.promo */
+  .pdp-promo{display:flex;align-items:center;gap:11px;border:1.5px solid var(--brand);
+    background:var(--brand-soft);border-radius:14px;padding:11px 14px;margin:0 0 18px}
+  .pdp-promo svg{width:20px;height:20px;color:var(--brand-d);flex:none}
+  .pdp-promo b{display:block;font-size:14px;color:#0b0a0f;line-height:1.25}
+  .pdp-promo span{display:block;font-size:12.5px;color:var(--brand-d);margin-top:1px}
+  /* ---- cores irmãs ---- */
+  .pdp-lbl{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    font-size:13px;font-weight:700;margin:0 0 9px;color:#0b0a0f}
+  .pdp-lbl span{font-weight:500;color:#6e6a78}
+  .pdp-lbl a{font-size:12.5px;font-weight:600;cursor:pointer}
+  .pdp-cores{display:grid;grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:9px;
+    margin:0 0 20px}
+  .pdp-cor{position:relative;border:2px solid var(--line);border-radius:12px;background:#fff;
+    padding:3px;cursor:pointer;font:inherit;display:block;
+    transition:border-color var(--mo-micro) ease,transform var(--mo-micro) var(--ez-out),
+      box-shadow var(--mo-micro) ease}
+  .pdp-cor:hover{transform:translateY(-2px);border-color:#8b8794}
+  .pdp-cor.on{border-color:#0b0a0f;transform:translateY(-2px);
+    box-shadow:0 10px 18px -12px rgba(11,10,15,.6)}
+  .pdp-cor.on::after{content:'';position:absolute;top:-5px;right:-5px;width:15px;height:15px;
+    border-radius:50%;background:#0b0a0f;border:2px solid #fff}
+  .pdp-cor img{width:100%;aspect-ratio:1;object-fit:contain;border-radius:8px;background:#f6f5f8}
+  .pdp-cor i{display:block;font-style:normal;font-size:10px;line-height:1.2;color:#4b4753;
+    margin-top:3px;text-align:center;overflow:hidden;display:-webkit-box;
+    -webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:24px}
+  .pdp-cores-mais{grid-column:1/-1;min-height:44px;border:1.5px solid var(--line);background:#fff;
+    border-radius:12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;color:#0b0a0f}
+  .pdp-cores-mais:hover{border-color:#0b0a0f}
+  /* ---- numeração ---- */
+  .sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:9px;margin:0 0 18px}
+  .sz{position:relative;min-height:52px;border:1.5px solid #d3d0db;background:#fff;border-radius:12px;
+    font:inherit;font-size:15px;font-weight:700;color:#0b0a0f;cursor:pointer;
+    transition:border-color var(--mo-micro) ease,background var(--mo-micro) ease,
+      transform var(--mo-micro) var(--ez-out)}
+  .sz:hover:not(:disabled){border-color:#0b0a0f}
+  .sz.on{border-color:#0b0a0f;border-width:2.5px;background:#f0eff3}
+  .sz.toque{animation:sacToque 180ms var(--ez-out) 1}
+  .sz:disabled{opacity:.32;cursor:not-allowed;text-decoration:line-through;
+    transform:none!important;animation:none!important}
+  .szgrupo{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:#8b8794;margin:0 0 7px}
+  /* ---- CTA ---- */
+  .buy,.addcart{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+    border-radius:999px;padding:18px;font:inherit;font-weight:800;font-size:15px;
+    letter-spacing:.03em;cursor:pointer;border:2px solid transparent;
+    transition:background var(--mo-micro) ease,transform var(--mo-micro) var(--ez-out)}
+  /* Pílula preta, como o "Try it today" do YNS. O verde de confirmar não some
+     da loja: continua no checkout e nos avisos de sucesso, que é onde ele quer
+     dizer alguma coisa. Na vitrine ele só competia com a foto. */
+  .buy{background:var(--acao);color:#fff;border:none;font-weight:500}
+  .buy:hover{background:var(--acao-h)}
+  .buy:active:not(:disabled){transform:scale(.985)}
+  .buy .sac-ar{transition:transform var(--mo-micro) var(--ez-out)}
+  .buy:hover .sac-ar{transform:translateX(4px)}
+  .addcart{background:#fff;color:var(--ink);border-color:var(--line);margin-top:10px;font-weight:500}
+  .addcart:hover{border-color:var(--ink)}
+  .addcart:active:not(:disabled){transform:scale(.985)}
+  .buy:disabled,.addcart:disabled{opacity:.4;cursor:not-allowed}
+  .pdp-trust{display:grid;gap:9px;margin:18px 0 0;font-size:13px;color:#3a3742}
+  .pdp-trust div{display:flex;align-items:center;gap:9px}
+  .pdp-trust svg{width:17px;height:17px;color:var(--comprar);flex:none}
+  /* ---- barra fixa do celular ---- */
+  .pdp-sticky{position:fixed;left:0;right:0;bottom:0;z-index:55;background:#fff;
+    border-top:1px solid var(--line);display:flex;align-items:center;gap:12px;
+    padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+    box-shadow:0 -10px 26px -22px rgba(11,10,15,.8);
+    transform:translateY(110%);transition:transform var(--mo-comp) var(--ez)}
+  .pdp-sticky.on{transform:none}
+  @media(min-width:1000px){.pdp-sticky{display:none}}
+  /* no computador não existe barra fixa, então o rodapé da página volta ao normal */
+  @media(min-width:1000px){.pdp-fim{padding-bottom:54px}}
+  .pdp-sticky .v{flex:none}
+  .pdp-sticky .v b{display:block;font-size:17px;font-weight:600;color:var(--ink);line-height:1.1}
+  .pdp-sticky .v span{display:block;font-size:11px;color:#6e6a78}
+  .pdp-sticky button{flex:1;min-height:48px;border:none;border-radius:999px;cursor:pointer;
+    background:var(--acao);color:#fff;font:inherit;font-weight:500;font-size:14px;
+    letter-spacing:.02em}
+  .pdp-sticky button:disabled{opacity:.45}
+  /* ===================== SEÇÃO CINEMATOGRÁFICA ===================== */
+  /* A foto fica grudada de um lado e troca conforme cada bloco de texto entra.
+     Sensação de filme sem WebGL e sem sequestrar o scroll. */
+  /* A seção cinematográfica ganha a chapa de concreto por trás. A cor sólida
+     continua declarada: se a textura não baixar, muda a matéria, não a
+     legibilidade. O gradiente por cima segura o contraste do texto branco. */
+  .pdp-cine{background:#0b0a0f;color:#fff;margin:34px 0 0;padding:0 0 10px;position:relative;
+    background-image:linear-gradient(180deg,rgba(11,10,15,.94),rgba(11,10,15,.82)),
+      none;
+    background-size:cover;background-position:center;background-attachment:local}
+  .pdp-cine-in{max-width:1240px;margin:0 auto;padding:0 16px;display:grid;gap:0}
+  @media(min-width:900px){
+    .pdp-cine-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;padding:0 26px}
+  }
+  .pdp-cine-img{position:relative}
+  @media(min-width:900px){
+    .pdp-cine-img{position:sticky;top:calc(var(--hdr-h) + 40px);height:min(72vh,560px);
+      display:grid;place-items:center}
+  }
+  @media(max-width:899px){
+    /* 34vh, não 46vh. Com 46 a foto comia dois terços da tela e o bloco de
+       texto entrava pela beirada de baixo, sem espaço para ser lido — que é o
+       ponto inteiro da seção. Agora a foto ocupa um terço e o texto tem a
+       metade de baixo só para ele. */
+    .pdp-cine-img{position:sticky;top:calc(var(--hdr-h) + 8px);height:34vh;display:grid;
+      place-items:center;z-index:2;background:#0b0a0f;padding-bottom:10px}
+    .pdp-cine-bloco{min-height:46vh;padding:22px 0}
+  }
+  .pdp-cine-img img{width:100%;height:100%;object-fit:contain;
+    transition:opacity var(--mo-comp) var(--ez-out),transform var(--mo-hero) var(--ez)}
+  .pdp-cine-img img.trocando{opacity:0;transform:scale(.96) rotate(-1.5deg)}
+  .pdp-cine-tx{display:grid;gap:0}
+  .pdp-cine-bloco{min-height:64vh;display:flex;flex-direction:column;justify-content:center;
+    padding:30px 0}
+  @media(min-width:900px){.pdp-cine-bloco{min-height:78vh}}
+  .pdp-cine-bloco .n{font-size:11px;font-weight:800;letter-spacing:.2em;color:var(--volt);
+    text-transform:uppercase}
+  .pdp-cine-bloco h3{font-size:clamp(24px,6vw,40px);line-height:1.04;margin:12px 0 12px;
+    font-weight:800;letter-spacing:-.03em;text-transform:uppercase}
+  .pdp-cine-bloco p{margin:0;font-size:15px;line-height:1.6;color:#c9c3d6;max-width:34em}
+  .pdp-cine-bloco p b{color:#fff}
+  /* ---- CTA final da página ---- */
+  /* O padding de baixo reserva o espaço da barra fixa de comprar (altura do
+     botão + safe area do iPhone). Sem isto ela cobria a última linha de texto
+     da página — dava para ver metade da frase atrás do botão verde. */
+  .pdp-fim{background:#0b0a0f;color:#fff;text-align:center;
+    padding:38px 16px calc(54px + 72px + env(safe-area-inset-bottom));position:relative;
+    background-image:linear-gradient(180deg,rgba(11,10,15,.86),rgba(11,10,15,.96)),
+      none;
+    background-size:cover;background-position:center}
+  .pdp-fim h3{font-size:clamp(22px,5.5vw,32px);margin:0 0 8px;font-weight:800;
+    letter-spacing:-.02em;text-transform:uppercase}
+  .pdp-fim p{margin:0 0 20px;color:#b9b3c6;font-size:14px}
+  .pdp-fim .buy{max-width:380px;margin:0 auto}
+  /* ---- descrição / tabela ---- */
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+  .pcard.desc{margin-top:22px}
+  .pcard.desc h2{font-size:17px;margin:0 0 12px}
+  .desc-in{font-size:14.5px;line-height:1.65;color:#3a3742}
+  .medidas{display:grid;gap:16px;align-items:center}
+  @media(min-width:760px){.medidas{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+  .medidas img{width:100%;height:auto;border-radius:12px;cursor:zoom-in;border:1px solid var(--line)}
+  .medidas-tx h3{font-size:15px;margin:0 0 8px}
+  .medidas-tx p{margin:0 0 8px;font-size:13.5px;line-height:1.6;color:#4b4753}
+  .medidas-zoom{color:#8b8794;font-size:12.5px}
+  /* ---- ficha, montada dos dados REAIS do catálogo ---- */
+  .pdp-ficha{display:grid;gap:0;margin:14px 0 0;border-top:1px solid var(--line)}
+  .pdp-ficha div{display:flex;justify-content:space-between;gap:14px;padding:11px 0;
+    border-bottom:1px solid var(--line);font-size:13.5px}
+  .pdp-ficha dt{color:#6e6a78;margin:0}
+  .pdp-ficha dd{margin:0;color:#0b0a0f;font-weight:600;text-align:right}
+  /* ---- modal de zoom ---- */
+  .modal{position:fixed;inset:0;z-index:95;background:rgba(11,10,15,.92);display:none;
+    place-items:center;padding:20px}
+  .modal.on{display:grid}
+  .modal img{max-width:100%;max-height:92vh;object-fit:contain;border-radius:10px}
+  .modal button{position:absolute;top:14px;right:16px;width:44px;height:44px;border-radius:999px;
+    border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);color:#fff;font-size:26px;
+    cursor:pointer;line-height:1}
+  @media(prefers-reduced-motion:reduce){
+    .pdp-slide img,.pdp-giro,.pdp-cine-img img,.pdp-sticky,.pdp-cor,.pdp-thumb,.sz{transition-duration:1ms!important}
+    .pdp-cine-img img.trocando{transform:none}
+    .sz.toque{animation:none}
+  }

@@ -1,32 +1,44 @@
 // PixGate: pagamentos via Pix. Somente servidor.
-// Chave cadastrada no /admin (private_settings, só service role). O secret PIXGATE_API_KEY do
-// Lovable serve de reserva.
+// Chave: /admin (private_settings) ou secret PIXGATE_API_KEY do Lovable.
 export const PIXGATE_API = "https://app.pixgateip.com/api";
 
 const KEY = "pixgate_api_key";
-// A tela do pedido consulta o status a cada poucos segundos: guarda a chave por 1 minuto.
 const CACHE_MS = 60_000;
 let cache: { value: string | null; at: number } | null = null;
+
+function envKey(): string | null {
+  const v =
+    process.env["PIXGATE_API_KEY"]?.trim() ||
+    process.env["PIX_GATE_API_KEY"]?.trim() ||
+    null;
+  return v || null;
+}
 
 async function db() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   return supabaseAdmin;
 }
 
-/** Chave salva no /admin (se houver). */
+/** Chave salva no /admin (se houver). Falha de DB não derruba o fallback do Secret. */
 async function savedKey(): Promise<string | null> {
-  const { data } = await (await db())
-    .from("private_settings")
-    .select("value")
-    .eq("key", KEY)
-    .maybeSingle();
-  return (data?.value as string | null) || null;
+  try {
+    const { data } = await (await db())
+      .from("private_settings")
+      .select("value")
+      .eq("key", KEY)
+      .maybeSingle();
+    const v = typeof data?.value === "string" ? data.value.trim() : "";
+    return v || null;
+  } catch (e) {
+    console.error("[pixgate] private_settings indisponível, usando Secret se houver", e);
+    return null;
+  }
 }
 
 /** Chave em uso: a do /admin ou, sem ela, o secret do Lovable. */
 export async function getPixgateKey(): Promise<string | null> {
   if (cache && Date.now() - cache.at < CACHE_MS) return cache.value;
-  const value = (await savedKey()) || process.env["PIXGATE_API_KEY"] || null;
+  const value = (await savedKey()) || envKey();
   cache = { value, at: Date.now() };
   return value;
 }
@@ -38,14 +50,16 @@ export async function getPixgateKeySource(): Promise<{
 }> {
   const saved = await savedKey();
   if (saved) return { key: saved, source: "admin" };
-  const env = process.env["PIXGATE_API_KEY"] || null;
+  const env = envKey();
   return { key: env, source: env ? "secret" : null };
 }
 
 export async function savePixgateKey(value: string): Promise<void> {
+  const trimmed = value.trim();
+  if (!trimmed) throw new Error("Cole a chave da PixGate.");
   const { error } = await (await db())
     .from("private_settings")
-    .upsert({ key: KEY, value, updated_at: new Date().toISOString() });
+    .upsert({ key: KEY, value: trimmed, updated_at: new Date().toISOString() });
   if (error) throw new Error(error.message);
   cache = null;
 }
@@ -66,7 +80,11 @@ export async function testPixgateKey(): Promise<{
   error?: string | undefined;
 }> {
   const key = await getPixgateKey();
-  if (!key) return { ok: false, error: "Nenhuma chave cadastrada" };
+  if (!key)
+    return {
+      ok: false,
+      error: "Nenhuma chave. Secret PIXGATE_API_KEY ou cole no /admin → Gateway do Pix.",
+    };
   try {
     const res = await fetch(`${PIXGATE_API}/stats/00000000-0000-0000-0000-000000000000`, {
       headers: { Apikey: key, Accept: "application/json" },

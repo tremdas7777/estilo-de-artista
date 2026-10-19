@@ -155,7 +155,11 @@ export async function fetchPixStatus(id: string): Promise<{ status: string; amou
 
 async function pixgateKey(): Promise<string> {
   const key = await getPixgateKey();
-  if (!key) throw new Error("Pagamento indisponível no momento.");
+  if (!key) {
+    throw new Error(
+      "PixGate sem chave. No Lovable use o Secret PIXGATE_API_KEY, ou cole a chave em /admin → Gateway do Pix.",
+    );
+  }
   return key;
 }
 

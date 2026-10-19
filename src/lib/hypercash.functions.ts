@@ -40,7 +40,10 @@ export const saveHypercashKeysFn = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     assertAdmin(data.password);
-    await saveHypercashKeys({ secret: data.secret, public: data.public });
+    await saveHypercashKeys({
+      ...(data.secret !== undefined ? { secret: data.secret } : {}),
+      ...(data.public !== undefined ? { public: data.public } : {}),
+    });
     return { ok: true };
   });
 

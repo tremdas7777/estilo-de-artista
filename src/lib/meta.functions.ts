@@ -46,7 +46,7 @@ export const saveMetaAdmin = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     assertAdmin(data.password);
-    await saveMetaConfig({ pixelId: data.pixelId, accessToken: data.accessToken || undefined, testCode: data.testCode });
+    await saveMetaConfig({ pixelId: data.pixelId, ...(data.accessToken ? { accessToken: data.accessToken } : {}), testCode: data.testCode });
     return { ok: true };
   });
 

@@ -23,7 +23,7 @@ export type RastroOrder = {
 export type RastroResult = {
   ok: boolean;
   status?: number;
-  trackingCode?: string;
+  trackingCode?: string | undefined;
   duplicate?: boolean;
   error?: string;
   details?: unknown;

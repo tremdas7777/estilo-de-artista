@@ -20,7 +20,7 @@ export const setCardEnabled = createServerFn({ method: "POST" })
     z.object({ password: z.string().min(1).max(200), enabled: z.boolean() }).parse(d),
   )
   .handler(async ({ data }) => {
-    if (data.password !== process.env.ADMIN_PASSWORD) {
+    if (data.password !== process.env['ADMIN_PASSWORD']) {
       throw new Error("Unauthorized");
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -36,7 +36,7 @@ export const setWhatsappEnabled = createServerFn({ method: "POST" })
     z.object({ password: z.string().min(1).max(200), enabled: z.boolean() }).parse(d),
   )
   .handler(async ({ data }) => {
-    if (data.password !== process.env.ADMIN_PASSWORD) {
+    if (data.password !== process.env['ADMIN_PASSWORD']) {
       throw new Error("Unauthorized");
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

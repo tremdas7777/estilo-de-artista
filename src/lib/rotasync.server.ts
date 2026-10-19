@@ -13,7 +13,7 @@ const DEFAULT_API = "https://rotasync.online";
 export type RotasyncAddress = {
   street: string;
   number: string;
-  complement?: string;
+  complement?: string | undefined;
   neighborhood: string;
   city: string;
   state: string;
@@ -30,8 +30,8 @@ export type RotasyncOrder = {
 export type RotasyncResult = {
   ok: boolean;
   status?: number;
-  trackingCode?: string;
-  trackingUrl?: string;
+  trackingCode?: string | undefined;
+  trackingUrl?: string | undefined;
   duplicate?: boolean;
   error?: string;
   details?: unknown;
@@ -78,7 +78,7 @@ function buildBody(o: RotasyncOrder) {
 }
 
 /** O código/link de rastreio podem vir em vários formatos de resposta — tenta os mais comuns. */
-function pickTracking(json: unknown): { trackingCode?: string; trackingUrl?: string } {
+function pickTracking(json: unknown): { trackingCode?: string | undefined; trackingUrl?: string | undefined } {
   const j = json as
     | {
         tracking_code?: string;

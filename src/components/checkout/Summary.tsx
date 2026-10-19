@@ -10,7 +10,7 @@ type Props = {
   subtotalCents: number;
   discountCents: number;
   frete: number;
-  promoLabel?: string;
+  promoLabel?: string | undefined;
 };
 
 const totalOf = ({ subtotalCents, discountCents, frete }: Props) =>

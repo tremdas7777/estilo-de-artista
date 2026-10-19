@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep the legacy express-shipping URL as a redirect to order confirmation while post-purchase offers are disabled, so older payment sessions never target a missing route.

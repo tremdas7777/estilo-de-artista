@@ -15,6 +15,7 @@ import { Route as CarrinhoRouteImport } from './routes/carrinho'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as RastreioRouteImport } from './routes/rastreio'
 import { Route as ColecaoHandleRouteImport } from './routes/colecao.$handle'
+import { Route as ExpressoIdRouteImport } from './routes/expresso.$id'
 import { Route as ObrigadoIdRouteImport } from './routes/obrigado.$id'
 import { Route as PedidoIdRouteImport } from './routes/pedido.$id'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
@@ -51,6 +52,11 @@ const ColecaoHandleRoute = ColecaoHandleRouteImport.update({
   path: '/colecao/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExpressoIdRoute = ExpressoIdRouteImport.update({
+  id: '/expresso/$id',
+  path: '/expresso/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ObrigadoIdRoute = ObrigadoIdRouteImport.update({
   id: '/obrigado/$id',
   path: '/obrigado/$id',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/rastreio': typeof RastreioRoute
   '/colecao/$handle': typeof ColecaoHandleRoute
+  '/expresso/$id': typeof ExpressoIdRoute
   '/obrigado/$id': typeof ObrigadoIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/rastreio': typeof RastreioRoute
   '/colecao/$handle': typeof ColecaoHandleRoute
+  '/expresso/$id': typeof ExpressoIdRoute
   '/obrigado/$id': typeof ObrigadoIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/rastreio': typeof RastreioRoute
   '/colecao/$handle': typeof ColecaoHandleRoute
+  '/expresso/$id': typeof ExpressoIdRoute
   '/obrigado/$id': typeof ObrigadoIdRoute
   '/pedido/$id': typeof PedidoIdRoute
   '/produto/$handle': typeof ProdutoHandleRoute
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/rastreio'
     | '/colecao/$handle'
+    | '/expresso/$id'
     | '/obrigado/$id'
     | '/pedido/$id'
     | '/produto/$handle'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/rastreio'
     | '/colecao/$handle'
+    | '/expresso/$id'
     | '/obrigado/$id'
     | '/pedido/$id'
     | '/produto/$handle'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/rastreio'
     | '/colecao/$handle'
+    | '/expresso/$id'
     | '/obrigado/$id'
     | '/pedido/$id'
     | '/produto/$handle'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   RastreioRoute: typeof RastreioRoute
   ColecaoHandleRoute: typeof ColecaoHandleRoute
+  ExpressoIdRoute: typeof ExpressoIdRoute
   ObrigadoIdRoute: typeof ObrigadoIdRoute
   PedidoIdRoute: typeof PedidoIdRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ColecaoHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/expresso/$id': {
+      id: '/expresso/$id'
+      path: '/expresso/$id'
+      fullPath: '/expresso/$id'
+      preLoaderRoute: typeof ExpressoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/obrigado/$id': {
       id: '/obrigado/$id'
       path: '/obrigado/$id'
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   RastreioRoute: RastreioRoute,
   ColecaoHandleRoute: ColecaoHandleRoute,
+  ExpressoIdRoute: ExpressoIdRoute,
   ObrigadoIdRoute: ObrigadoIdRoute,
   PedidoIdRoute: PedidoIdRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,

@@ -13,9 +13,9 @@ export type StoredCustomer = {
   email: string;
   phone: string;
   cpf: string;
-  endereco?: string;
+  endereco?: string | undefined;
   /** Endereço por partes (pedidos a partir da integração com a RastroCode). */
-  address?: RotasyncAddress;
+  address?: RotasyncAddress | undefined;
   frete?: { id: string; name: string; price: number };
   bumps?: { id: string; name: string; price: number }[];
   /** Formato antigo (um só bump). */
@@ -48,7 +48,7 @@ export async function saveOrder(o: {
   customer: StoredCustomer;
   bundleId: string;
   bundleName: string;
-  utm?: UtmParams;
+  utm?: UtmParams | undefined;
   ip?: string | null;
   ua?: string | null;
   fbp?: string | null;
@@ -121,7 +121,7 @@ export async function reportPendingToUtmify(o: {
   customer: StoredCustomer;
   bundleId: string;
   bundleName: string;
-  utm?: UtmParams;
+  utm?: UtmParams | undefined;
   ip?: string | null;
   createdAt: number;
 }): Promise<void> {
@@ -223,9 +223,9 @@ export async function reportPaidOnce(
   id: string,
   gatewayAmount: number,
   extra?: {
-    fbp?: string | null;
-    fbc?: string | null;
-    url?: string;
+    fbp?: string | null | undefined;
+    fbc?: string | null | undefined;
+    url?: string | undefined;
     ip?: string | null;
     ua?: string | null;
   },

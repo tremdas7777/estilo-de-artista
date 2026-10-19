@@ -150,11 +150,11 @@ export function OrdersTab({ password }: OrdersTabProps) {
         o.bundle_name,
         c.frete?.name,
         (o.amount_cents / 100).toFixed(2).replace(".", ","),
-        u.utm_source,
-        u.utm_medium,
-        u.utm_campaign,
-        u.utm_content,
-        u.utm_term,
+        u['utm_source'],
+        u['utm_medium'],
+        u['utm_campaign'],
+        u['utm_content'],
+        u['utm_term'],
         isPaid(o) ? fmtDate(o.paid_reported_at ?? o.updated_at) : "",
       ]
         .map(esc)
@@ -295,7 +295,7 @@ export function OrdersTab({ password }: OrdersTabProps) {
                     {brl(o.amount_cents)}
                   </td>
                   <td className="px-4 py-2 text-xs text-muted-foreground">
-                    {o.utm?.utm_source ?? "—"}
+                    {o.utm?.['utm_source'] ?? "—"}
                   </td>
                   <td className="px-4 py-2">
                     <UtmifyBadge order={o} />

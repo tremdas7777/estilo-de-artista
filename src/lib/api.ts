@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 /** Loja oficial (catálogo, combo, PIX). */
 export const LOJA_API =
-  (typeof process !== "undefined" && process.env.LOJA_API_URL) ||
+  (typeof process !== "undefined" && process.env['LOJA_API_URL']) ||
   "https://estilo-de-artista.vercel.app";
 
 async function apiGet<T>(path: string): Promise<T> {

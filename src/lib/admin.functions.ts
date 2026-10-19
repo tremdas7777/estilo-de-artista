@@ -5,7 +5,7 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 export const verifyAdminPassword = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ password: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ data }) => {
-    const expected = process.env.ADMIN_PASSWORD;
+    const expected = process.env['ADMIN_PASSWORD'];
     if (!expected) return { ok: false, error: "ADMIN_PASSWORD not set" };
     return { ok: data.password === expected };
   });
@@ -26,7 +26,7 @@ export const getAdminFunnel = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    if (data.password !== process.env.ADMIN_PASSWORD) {
+    if (data.password !== process.env['ADMIN_PASSWORD']) {
       throw new Error("Unauthorized");
     }
 
@@ -51,7 +51,7 @@ export const getAdminFunnel = createServerFn({ method: "POST" })
     const lastSeenBySession = new Map<string, string>();
     for (const e of events) {
       if (!sessions.has(e.session_id)) sessions.set(e.session_id, new Set());
-      sessions.get(e.session_id)!.add(e.event_type);
+      sessions.get(e.session_id)?.add(e.event_type);
       const prev = lastSeenBySession.get(e.session_id);
       if (!prev || new Date(e.created_at).getTime() > new Date(prev).getTime()) {
         lastSeenBySession.set(e.session_id, e.created_at);
@@ -140,7 +140,7 @@ export const getAdminOrders = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }): Promise<{ orders: AdminOrder[] }> => {
-    if (data.password !== process.env.ADMIN_PASSWORD) {
+    if (data.password !== process.env['ADMIN_PASSWORD']) {
       throw new Error("Unauthorized");
     }
     const since = periodStart(data.days);
@@ -259,7 +259,7 @@ export const getAbandonedCheckouts = createServerFn({ method: "POST" })
     async ({
       data,
     }): Promise<{ funnel: Record<AbandonStep | "pago", number>; rows: AbandonedCheckout[] }> => {
-      if (data.password !== process.env.ADMIN_PASSWORD) throw new Error("Unauthorized");
+      if (data.password !== process.env['ADMIN_PASSWORD']) throw new Error("Unauthorized");
       const since = periodStart(data.days);
 
       const { data: events, error } = await supabaseAdmin

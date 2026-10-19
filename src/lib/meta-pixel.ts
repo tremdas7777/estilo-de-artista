@@ -52,7 +52,7 @@ export function loadMetaPixel(pixelId: string) {
     document.head.appendChild(s);
   }
   if (!inited.has(pixelId)) {
-    window.fbq!("init", pixelId);
+    window.fbq?.("init", pixelId);
     inited.add(pixelId);
   }
   flush();
@@ -70,7 +70,7 @@ function flush() {
 
 function cookie(name: string): string | null {
   const m = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
-  return m ? decodeURIComponent(m[1]) : null;
+  return m?.[1] !== undefined ? decodeURIComponent(m[1]) : null;
 }
 
 /** fbc a partir do fbclid da URL quando o cookie ainda não existe. */

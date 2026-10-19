@@ -38,16 +38,16 @@ export type CapiUser = {
   cpf?: string;
   ip?: string | null;
   ua?: string | null;
-  fbp?: string | null;
-  fbc?: string | null;
+  fbp?: string | null | undefined;
+  fbc?: string | null | undefined;
 };
 
 export type CapiEvent = {
   eventName: string;
   eventId: string;
-  url?: string;
+  url?: string | undefined;
   user: CapiUser;
-  customData?: Record<string, unknown>;
+  customData?: Record<string, unknown> | undefined;
 };
 
 export async function sendCapiEvent(ev: CapiEvent): Promise<{ ok: boolean; error?: string }> {

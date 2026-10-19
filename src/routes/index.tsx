@@ -1,32 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, type ReactNode } from "react";
-import bannerDesktop from "@/assets/banner-principal-desktop.webp.asset.json";
-import bannerMobile from "@/assets/banner-principal-mobile.webp.asset.json";
-import { Catalogo } from "@/components/catalogo";
+import { useMemo } from "react";
+import { Hero } from "@/components/hero";
+import { Selos } from "@/components/selos";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { Destaque, Vitrine } from "@/components/vitrine";
 import { WhatsFloat } from "@/components/whats-float";
-import {
-  PRECO_DUPLA,
-  PRECO_PAR,
-  PRODUTOS,
-  brl,
-  marcasComQtde,
-  semAcento,
-} from "@/lib/produtos";
+import { ProdutoCard } from "@/components/produto-card";
+import { HOME, type HomeProduct } from "@/lib/home";
+import { PRODUTOS, semAcento } from "@/lib/produtos";
 
 type LojaSearch = {
-  tipo?: string;
-  marca?: string;
   q?: string;
 };
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>): LojaSearch => ({
-    tipo: typeof search.tipo === "string" ? search.tipo : undefined,
-    marca: typeof search.marca === "string" ? search.marca : undefined,
-    q: typeof search.q === "string" ? search.q : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): LojaSearch => {
+    const q = search["q"];
+    return typeof q === "string" ? { q } : {};
+  },
   head: () => ({
     meta: [
       { title: "Estilo de Artista — O par certo, na sua porta" },
@@ -48,148 +40,153 @@ export const Route = createFileRoute("/")({
 });
 
 function LojaHome() {
-  const { tipo, marca, q } = Route.useSearch();
-  const navigate = Route.useNavigate();
+  const { q } = Route.useSearch();
+  const secoes = HOME.sections;
+  const corte = Math.ceil(secoes.length / 2);
 
-  const filtrados = useMemo(() => {
-    const termo = q ? semAcento(q) : "";
-    return PRODUTOS.filter((p) => {
-      if (tipo && p.type !== tipo) return false;
-      if (marca && p.brand !== marca) return false;
-      if (!termo) return true;
-      return (
+  const busca = useMemo(() => {
+    if (!q?.trim()) return null as HomeProduct[] | null;
+    const termo = semAcento(q);
+    return PRODUTOS.filter(
+      (p) =>
         semAcento(p.title).includes(termo) ||
         semAcento(p.brand).includes(termo) ||
-        semAcento(p.type).includes(termo)
-      );
-    });
-  }, [tipo, marca, q]);
-
-  const marcas = marcasComQtde().slice(0, 12);
-  const filtroKey = `${tipo ?? ""}|${marca ?? ""}|${q ?? ""}`;
+        semAcento(p.type).includes(termo),
+    ).map(
+      (p): HomeProduct => ({
+        id: p.handle,
+        title: p.title,
+        handle: p.handle,
+        image: p.img,
+        variants: [
+          {
+            id: `${p.handle}::base`,
+            option: p.sizes[0] || "",
+            priceCents: p.price,
+            compareCents: p.compare,
+            available: true,
+          },
+        ],
+      }),
+    );
+  }, [q]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <SiteHeader />
+    <div className="loja">
+      <SiteHeader menu={HOME.menu} overHero />
+      <Hero />
+      <Selos />
 
-      <section className="relative overflow-hidden bg-foreground text-background">
-        <picture>
-          <source media="(min-width: 768px)" srcSet={bannerDesktop.url} />
-          <img
-            src={bannerMobile.url}
-            alt="Estilo de Artista — coleção"
-            width={1600}
-            height={900}
-            className="max-h-[52vh] w-full object-cover opacity-90 md:max-h-[58vh]"
-          />
-        </picture>
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground via-foreground/40 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 mx-auto max-w-6xl px-4 pb-8 md:pb-12">
-          <p className="text-xs font-bold uppercase tracking-[0.3em] text-volt">Estilo de Artista</p>
-          <h1 className="mt-2 max-w-xl text-4xl font-extrabold leading-none md:text-6xl">
-            Seu estilo.
-            <br />
-            Suas regras.
-          </h1>
-          <p className="mt-3 max-w-md text-sm text-background/80 md:text-base">
-            1 par R$ {brl(PRECO_PAR)} · 2 pares R$ {brl(PRECO_DUPLA)}. Frete para todo o Brasil.
+      {busca ? (
+        <main className="wrap">
+          <h1 className="ctitle">Resultados para “{q}”</h1>
+          <p className="muted" style={{ marginBottom: 8 }}>
+            {busca.length} produto{busca.length === 1 ? "" : "s"}
           </p>
-        </div>
-      </section>
-
-      <div className="border-b border-border bg-volt px-4 py-3 text-center text-sm font-bold text-foreground">
-        PROMO · leve 2 pares por R$ {brl(PRECO_DUPLA)}
-      </div>
-
-      <main id="catalogo" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:py-12">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <h2 className="text-3xl font-extrabold">Vitrine</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {PRODUTOS.length} produtos · filtre por marca ou categoria
+          {busca.length === 0 ? (
+            <p className="muted" style={{ padding: "40px 0", textAlign: "center" }}>
+              Nada encontrado — tenta outro termo.
             </p>
+          ) : (
+            <div className="grid">
+              {busca.map((p) => (
+                <ProdutoCard key={p.handle} produto={p} />
+              ))}
+            </div>
+          )}
+        </main>
+      ) : (
+        <>
+          <div id="feats">
+            {HOME.destaque ? <Destaque destaque={HOME.destaque} /> : null}
+            {secoes.slice(0, corte).map((s) => (
+              <Vitrine key={s.handle} section={s} />
+            ))}
           </div>
-          <label className="block w-full md:max-w-xs">
-            <span className="sr-only">Buscar</span>
-            <input
-              type="search"
-              defaultValue={q ?? ""}
-              placeholder="Buscar tênis, marca…"
-              className="w-full rounded-lg border border-input bg-card px-4 py-2.5 text-sm outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-foreground"
-              onChange={(e) => {
-                const value = e.target.value.trim();
-                void navigate({
-                  search: (prev) => ({
-                    ...prev,
-                    q: value || undefined,
-                  }),
-                  replace: true,
-                });
+
+          <section className="insta" style={{ background: "#fff", padding: "38px 0 44px" }}>
+            <div
+              className="insta-in"
+              style={{
+                maxWidth: 1240,
+                margin: "0 auto",
+                padding: "0 16px",
+                display: "grid",
+                gap: 26,
+                alignItems: "center",
               }}
-            />
-          </label>
-        </div>
-
-        <div className="scrollbar-none mt-6 flex gap-2 overflow-x-auto pb-1">
-          <FiltroChip
-            ativo={!marca}
-            onClick={() =>
-              void navigate({
-                search: (prev) => ({ ...prev, marca: undefined }),
-              })
-            }
-          >
-            Todas as marcas
-          </FiltroChip>
-          {marcas.map((m) => (
-            <FiltroChip
-              key={m.nome}
-              ativo={marca === m.nome}
-              onClick={() =>
-                void navigate({
-                  search: (prev) => ({
-                    ...prev,
-                    marca: prev.marca === m.nome ? undefined : m.nome,
-                  }),
-                })
-              }
             >
-              {m.nome} ({m.qtde})
-            </FiltroChip>
-          ))}
-        </div>
+              <a
+                href="https://www.instagram.com/estilo_de_artista_/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "block", borderRadius: 20, overflow: "hidden" }}
+              >
+                <img
+                  src="/assets/banner-instagram.webp"
+                  alt="Siga Estilo de Artista no Instagram"
+                  width={1200}
+                  height={1200}
+                  loading="lazy"
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+              </a>
+            </div>
+          </section>
 
-        <div className="mt-8">
-          <Catalogo key={filtroKey} produtos={filtrados} filtro={filtroKey} totalGeral={PRODUTOS.length} />
-        </div>
-      </main>
+          <div id="feats2">
+            {secoes.slice(corte).map((s) => (
+              <Vitrine key={s.handle} section={s} />
+            ))}
+          </div>
+
+          <section className="about">
+            <div className="about-in">
+              <div className="about-img">
+                <img
+                  src="/assets/loja-fachada.webp"
+                  width={1200}
+                  height={724}
+                  loading="lazy"
+                  alt="Parede de tênis com o letreiro Estilo de Artista"
+                />
+              </div>
+              <div className="about-tx">
+                <h2>Quem é Estilo de Artista</h2>
+                <p>
+                  Estilo de Artista nasceu de uma ideia simples: tênis que a rua respeita, chegando
+                  na sua casa sem enrolação.
+                </p>
+                <p>
+                  A gente é focado. Não vende de tudo — vende{" "}
+                  <strong>TN, Tesla, Hocks, Vans e Puma</strong> e os modelos que realmente importam
+                  pra quem entende do assunto. Cada par que entra no catálogo passa por curadoria.
+                  Se a gente não usaria, não vende.
+                </p>
+                <p>
+                  <strong>Rastreio desde o primeiro dia.</strong> Comprou, recebeu o código. Dá pra
+                  acompanhar o pedido do envio até a sua porta.
+                </p>
+                <p>
+                  <strong>Deu errado, a gente resolve.</strong> Tamanho não serviu, chegou diferente
+                  do que você esperava, veio com defeito? Troca ou devolução — sem discussão e sem
+                  letra miúda.
+                </p>
+                <p>
+                  <strong>Atendimento com gente de verdade.</strong> WhatsApp respondido por pessoa,
+                  não por robô. Se bater dúvida antes de comprar, chama.
+                </p>
+                <p>
+                  <strong>Estilo de Artista — o par certo, na sua porta.</strong>
+                </p>
+              </div>
+            </div>
+          </section>
+        </>
+      )}
 
       <SiteFooter />
       <WhatsFloat />
     </div>
-  );
-}
-
-function FiltroChip({
-  children,
-  ativo,
-  onClick,
-}: {
-  children: ReactNode;
-  ativo: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-semibold transition-colors ${
-        ativo
-          ? "bg-foreground text-background"
-          : "bg-muted text-foreground hover:bg-foreground/10"
-      }`}
-    >
-      {children}
-    </button>
   );
 }

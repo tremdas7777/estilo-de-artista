@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ColecaoHandleRouteImport } from './routes/colecao.$handle'
 import { Route as ProdutoHandleRouteImport } from './routes/produto.$handle'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ColecaoHandleRoute = ColecaoHandleRouteImport.update({
+  id: '/colecao/$handle',
+  path: '/colecao/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
@@ -25,27 +31,31 @@ const ProdutoHandleRoute = ProdutoHandleRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/colecao/$handle': typeof ColecaoHandleRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/colecao/$handle': typeof ColecaoHandleRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/colecao/$handle': typeof ColecaoHandleRoute
   '/produto/$handle': typeof ProdutoHandleRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/produto/$handle'
+  fullPaths: '/' | '/colecao/$handle' | '/produto/$handle'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/produto/$handle'
-  id: '__root__' | '/' | '/produto/$handle'
+  to: '/' | '/colecao/$handle' | '/produto/$handle'
+  id: '__root__' | '/' | '/colecao/$handle' | '/produto/$handle'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ColecaoHandleRoute: typeof ColecaoHandleRoute
   ProdutoHandleRoute: typeof ProdutoHandleRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/colecao/$handle': {
+      id: '/colecao/$handle'
+      path: '/colecao/$handle'
+      fullPath: '/colecao/$handle'
+      preLoaderRoute: typeof ColecaoHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produto/$handle': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ColecaoHandleRoute: ColecaoHandleRoute,
   ProdutoHandleRoute: ProdutoHandleRoute,
 }
 export const routeTree = rootRouteImport

@@ -36,9 +36,24 @@ export const Route = createFileRoute("/produto/$handle")({
 });
 
 function ProdutoPage() {
-  const data = Route.useLoaderData() as ApiProdutoResposta;
+  const data = Route.useLoaderData() as ApiProdutoResposta | undefined;
   const navigate = Route.useNavigate();
   const cart = useCart();
+  if (!data?.product) {
+    return (
+      <div className="loja">
+        <SiteHeader menu={HOME.menu} />
+        <div className="wrap" style={{ padding: "48px 16px", textAlign: "center" }}>
+          <h1>Produto indisponível</h1>
+          <p className="muted">Não foi possível carregar este produto.</p>
+          <Link to="/" className="btn" style={{ display: "inline-flex", marginTop: 16, width: "auto", padding: "12px 24px" }}>
+            Voltar à loja
+          </Link>
+        </div>
+        <SiteFooter />
+      </div>
+    );
+  }
   const p = data.product;
   const cores = data.cores?.cores || [];
   const modelo = data.cores?.modelo || "";

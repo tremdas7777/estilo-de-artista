@@ -7,15 +7,12 @@ export function ProdutoCard({ produto }: { produto: HomeProduct }) {
   const first = firstPrice(produto);
   const off = offPercent(produto);
   const temDe = first?.compareCents && first.compareCents > first.priceCents;
+  const handle = (produto.handle || "").trim();
+  if (!handle) return null;
 
   return (
-    <div className="prod">
-      <Link
-        to="/produto/$handle"
-        params={{ handle: produto.handle }}
-        className="ph"
-        style={{ backgroundImage: `url(${produto.image})` }}
-      >
+    <Link to="/produto/$handle" params={{ handle }} className="prod">
+      <span className="ph" style={{ backgroundImage: `url(${produto.image})` }}>
         {off != null && (
           <span className="off">
             <IconDown />
@@ -23,17 +20,17 @@ export function ProdutoCard({ produto }: { produto: HomeProduct }) {
           </span>
         )}
         <img src={produto.image} alt={produto.title} loading="lazy" decoding="async" />
-      </Link>
-      <Link to="/produto/$handle" params={{ handle: produto.handle }} className="ttl">
+      </span>
+      <span className="ttl">
         <h3>{produto.title}</h3>
-      </Link>
-      <div className="price">
+      </span>
+      <span className="price">
         {first ? money(first.priceCents) : null}
         {temDe ? <s>{money(first!.compareCents!)}</s> : null}
-      </div>
-      <div className="parc">
+      </span>
+      <span className="parc">
         à vista no <b>PIX</b>
-      </div>
-    </div>
+      </span>
+    </Link>
   );
 }

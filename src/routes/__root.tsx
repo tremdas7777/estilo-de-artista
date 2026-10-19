@@ -97,14 +97,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+/** Providers no shell — o SSR do TanStack Start às vezes renderiza a rota fora do component da root. */
 function RootShell({ children }: { children: ReactNode }) {
+  const { queryClient } = Route.useRouteContext();
+
   return (
     <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>
       <body>
-        {children}
+        <QueryClientProvider client={queryClient}>
+          <CartProvider>
+            {children}
+            <Sacola />
+          </CartProvider>
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>
@@ -112,14 +120,5 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <Outlet />
-        <Sacola />
-      </CartProvider>
-    </QueryClientProvider>
-  );
+  return <Outlet />;
 }

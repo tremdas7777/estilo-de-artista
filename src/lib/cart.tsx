@@ -176,8 +176,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
+const EMPTY_CART: CartCtx = {
+  lines: [],
+  count: 0,
+  subtotalCents: 0,
+  discountCents: 0,
+  totalCents: 0,
+  promoApplies: false,
+  eligibleQty: 0,
+  open: false,
+  setOpen: () => undefined,
+  add: () => undefined,
+  setQty: () => undefined,
+  remove: () => undefined,
+  clear: () => undefined,
+  itemsForOrder: () => [],
+  refreshing: false,
+};
+
 export function useCart(): CartCtx {
   const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("useCart fora do CartProvider");
+  // Evita quebrar SSR/navegação se o provider ainda não envolveu a árvore.
+  if (!ctx) return EMPTY_CART;
   return ctx;
 }
+

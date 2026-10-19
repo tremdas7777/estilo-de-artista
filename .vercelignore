@@ -1,5 +1,0 @@
-# O banco local de desenvolvimento (PGlite) não tem nada a fazer no deploy:
-# produção usa a Supabase (DATABASE_URL), e o pg.js RECUSA PGlite na Vercel.
-# Sem esta linha o deploy sobe dezenas de MB de banco de teste a cada publicação.
-# (data-import/ fica DE FORA daqui de propósito: o seed de produção lê o CSV de lá.)
-/data

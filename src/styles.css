@@ -3,6 +3,7 @@
 @import "tw-animate-css";
 @import "./styles/loja.css";
 @import "./styles/pdp.css";
+@import "./styles/sacola.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -159,4 +160,33 @@
       "Noto Sans", Arial, sans-serif;
     margin: 0;
   }
+}
+
+/* Checkout — identidade Estilo de Artista */
+.ck {
+  --ck-cta: #070707;
+  --ck-green: #070707;
+  --ck-footer: #0b0a0f;
+  --ck-ok: #1e9e4f;
+  --ck-field: #fafafa;
+  --ck-blue: #f10769;
+  --ck-brand: #f10769;
+  --ck-brand-dark: #bc0552;
+  --ck-brand-soft: #fee6f0;
+  --ck-volt: #d5e607;
+  --ck-pix: #32bcad;
+  --ck-badge: #e8f8ee;
+  --ck-bg: #ffffff;
+  background: var(--ck-bg);
+  font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue",
+    "Noto Sans", Arial, sans-serif;
+}
+.ck h1,
+.ck h2,
+.ck h3 {
+  font-family: inherit;
+  letter-spacing: -0.02em;
+}
+.ck .ck-surface {
+  background: var(--ck-bg);
 }

@@ -117,7 +117,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }));
   const { discountCents, applies } = computeDiscount(promoItems);
   const totalCents = Math.max(0, subtotalCents - discountCents);
-  const count = lines.reduce((s, l) => s + l.qty, 0);
+  // Contagem pelo mapa (localStorage) — não depende da API de detalhes.
+  const count = ids.reduce((s, id) => s + (map[id] || 0), 0);
   const eligibleQty = promoItems
     .filter((it) => it.priceCents === PROMO.eligiblePriceCents)
     .reduce((s, it) => s + it.qty, 0);

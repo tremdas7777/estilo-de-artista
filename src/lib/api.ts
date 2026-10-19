@@ -108,7 +108,12 @@ export const getVariants = createServerFn({ method: "GET" })
       ids: data.ids.join(","),
       det: "1",
     });
-    return apiGet<ApiVariantDetalhe[]>(`/api/variants?${qs}`);
+    // API oficial: { variants: [...] } (não um array solto).
+    const res = await apiGet<{ variants?: ApiVariantDetalhe[] } | ApiVariantDetalhe[]>(
+      `/api/variants?${qs}`,
+    );
+    if (Array.isArray(res)) return res;
+    return res.variants ?? [];
   });
 
 export const getCombo = createServerFn({ method: "GET" }).handler(async () => {

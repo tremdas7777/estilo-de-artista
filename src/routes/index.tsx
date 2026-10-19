@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import bannerDesktop from "@/assets/banner-principal-desktop.webp.asset.json";
 import bannerMobile from "@/assets/banner-principal-mobile.webp.asset.json";
 import { Catalogo } from "@/components/catalogo";
@@ -175,7 +175,7 @@ function FiltroChip({
   ativo,
   onClick,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   ativo: boolean;
   onClick: () => void;
 }) {

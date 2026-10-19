@@ -29,7 +29,9 @@ import {
 const pw = z.object({ password: z.string().min(1).max(200) });
 
 function assertAdmin(password: string) {
-  if (password !== process.env["ADMIN_PASSWORD"]) throw new Error("Não autorizado");
+  const expected = process.env["ADMIN_PASSWORD"];
+  if (!expected) throw new Error("ADMIN_PASSWORD não está nos Secrets do Lovable.");
+  if (password !== expected) throw new Error("Não autorizado");
 }
 
 function mask(token: string): string {
@@ -69,7 +71,9 @@ export const setPixGatewayFn = createServerFn({ method: "POST" })
   });
 
 export const savePixgateKeyFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => pw.extend({ key: z.string().trim().min(10).max(500) }).parse(d))
+  .inputValidator((d: unknown) =>
+    pw.extend({ key: z.string().trim().min(8).max(500) }).parse(d),
+  )
   .handler(async ({ data }) => {
     assertAdmin(data.password);
     await savePixgateKey(data.key);

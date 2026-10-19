@@ -1,5 +1,12 @@
 // PixGate: pagamentos via Pix. Somente servidor.
 // Chave: /admin (private_settings) ou secret PIXGATE_API_KEY do Lovable.
+import {
+  deletePrivateSetting,
+  friendlyDbError,
+  readPrivateSetting,
+  upsertPrivateSetting,
+} from "@/lib/private-settings.server";
+
 export const PIXGATE_API = "https://app.pixgateip.com/api";
 
 const KEY = "pixgate_api_key";
@@ -14,25 +21,8 @@ function envKey(): string | null {
   return v || null;
 }
 
-async function db() {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  return supabaseAdmin;
-}
-
-/** Chave salva no /admin (se houver). Falha de DB não derruba o fallback do Secret. */
 async function savedKey(): Promise<string | null> {
-  try {
-    const { data } = await (await db())
-      .from("private_settings")
-      .select("value")
-      .eq("key", KEY)
-      .maybeSingle();
-    const v = typeof data?.value === "string" ? data.value.trim() : "";
-    return v || null;
-  } catch (e) {
-    console.error("[pixgate] private_settings indisponível, usando Secret se houver", e);
-    return null;
-  }
+  return readPrivateSetting(KEY);
 }
 
 /** Chave em uso: a do /admin ou, sem ela, o secret do Lovable. */
@@ -57,16 +47,20 @@ export async function getPixgateKeySource(): Promise<{
 export async function savePixgateKey(value: string): Promise<void> {
   const trimmed = value.trim();
   if (!trimmed) throw new Error("Cole a chave da PixGate.");
-  const { error } = await (await db())
-    .from("private_settings")
-    .upsert({ key: KEY, value: trimmed, updated_at: new Date().toISOString() });
-  if (error) throw new Error(error.message);
+  try {
+    await upsertPrivateSetting(KEY, trimmed);
+  } catch (e) {
+    throw new Error(friendlyDbError(e));
+  }
   cache = null;
 }
 
 export async function deletePixgateKey(): Promise<void> {
-  const { error } = await (await db()).from("private_settings").delete().eq("key", KEY);
-  if (error) throw new Error(error.message);
+  try {
+    await deletePrivateSetting(KEY);
+  } catch (e) {
+    throw new Error(friendlyDbError(e));
+  }
   cache = null;
 }
 

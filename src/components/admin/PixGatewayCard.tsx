@@ -90,7 +90,12 @@ export function PixGatewayCard({ password }: { password: string }) {
       setMsg(await fn());
       return true;
     } catch (e) {
-      setMsg(e instanceof Error && e.message ? e.message : "Algo deu errado. Tente de novo.");
+      const raw = e instanceof Error ? e.message : "";
+      setMsg(
+        raw && !raw.startsWith("[")
+          ? raw
+          : "Falha ao salvar. Confira Supabase (setup-all.sql + service_role) e tente de novo.",
+      );
       return false;
     } finally {
       setBusy(null);
@@ -177,7 +182,15 @@ export function PixGatewayCard({ password }: { password: string }) {
           onTest={() => testKey(g)}
         />
       ))}
-      {msg && <p className="text-xs">{msg}</p>}
+      {msg && (
+        <p
+          className={`text-xs whitespace-pre-wrap ${
+            /pronto|salva|aceita|apagada/i.test(msg) ? "text-emerald-700" : "text-destructive"
+          }`}
+        >
+          {msg}
+        </p>
+      )}
     </Card>
   );
 }

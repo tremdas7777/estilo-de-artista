@@ -1,0 +1,76 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:900px;height:900px;background:#0a0a0a;color:#fff;overflow:hidden;
+    font-family:"Segoe UI",system-ui,Arial,sans-serif;padding:46px 44px}
+  h1{font-size:54px;font-weight:800;text-align:center;line-height:1}
+  .sub{text-align:center;margin:13px 0 0;font-size:18px;letter-spacing:.16em;
+    text-transform:uppercase;color:#d5e607}
+  .risco{width:340px;height:4px;margin:20px auto 36px;border-radius:99px;
+    background:linear-gradient(90deg,transparent,#f10769,transparent)}
+  table{width:100%;border-collapse:collapse;font-size:20px}
+  th,td{border:2px solid #6b0330;padding:19px 4px;text-align:center}
+  th.lbl{background:#bc0552;width:200px;font-size:18px;letter-spacing:.06em;
+    text-transform:uppercase}
+  th.lbl small{display:block;font-size:13px;font-weight:500;opacity:.75;margin-top:3px}
+  thead td{color:#ff7ab4;font-weight:800;font-size:26px}
+  tbody td{color:#fff;font-weight:600}
+  .rodape{display:flex;gap:32px;align-items:center;margin-top:34px}
+  .aviso{flex:1;text-align:center}
+  .bang{width:70px;height:70px;border:4px solid #f10769;border-radius:50%;
+    margin:0 auto 20px;display:flex;align-items:center;justify-content:center;
+    font-size:38px;font-weight:800;color:#ff7ab4;line-height:1}
+  .aviso p{font-size:21px;line-height:1.45;letter-spacing:.03em;text-transform:uppercase}
+  .aviso hr{border:0;border-top:2px solid #6b0330;margin:24px 46px}
+  .aviso .dica{color:#ff7ab4;font-size:18px}
+  .pe{flex:0 0 330px;display:flex;justify-content:center;align-items:center;gap:18px}
+  .eixo{writing-mode:vertical-rl;color:#ff7ab4;font-size:16px;letter-spacing:.24em;
+    text-transform:uppercase}
+</style></head><body>
+  <h1>TABELA DE MEDIDAS</h1>
+  <p class="sub">Encontre o tamanho ideal para você</p>
+  <div class="risco"></div>
+  <table>
+    <thead><tr><th class="lbl">Brasil</th>
+      <td>34</td><td>35</td><td>36</td><td>37</td><td>38</td><td>39</td>
+      <td>40</td><td>41</td><td>42</td><td>43</td><td>44</td></tr></thead>
+    <tbody>
+      <tr><th class="lbl">Comprimento<small>(cm)</small></th>
+        <td>22,5</td><td>23,0</td><td>24,0</td><td>24,5</td><td>25,5</td><td>26,0</td>
+        <td>26,5</td><td>27,5</td><td>28,0</td><td>29,0</td><td>29,5</td></tr>
+      <tr><th class="lbl">Palmilha<small>(cm)</small></th>
+        <td>23,0</td><td>23,5</td><td>24,5</td><td>25,0</td><td>26,0</td><td>26,5</td>
+        <td>27,0</td><td>28,0</td><td>28,5</td><td>29,5</td><td>30,0</td></tr>
+    </tbody>
+  </table>
+  <div class="rodape">
+    <div class="aviso">
+      <div class="bang">!</div>
+      <p>Medida da palmilha<br>interna do tênis.</p>
+      <hr>
+      <p class="dica">Em caso de dúvida,<br>escolha sempre o<br>maior tamanho.</p>
+    </div>
+    <div class="pe">
+      <svg width="185" height="390" viewBox="0 0 160 340" fill="none"
+           stroke="#fff" stroke-width="4" stroke-linejoin="round">
+        <!-- sola: bola larga em cima, arco estreito no meio, calcanhar arredondado -->
+        <path d="M112 92c14 20 13 44 6 68-8 26-12 46-8 70 5 30-8 56-32 58-24 2-40-20-38-50
+                 2-26 8-48 2-74-6-26-12-48-4-70 8-22 28-32 46-30 14 2 22 12 28 28z"/>
+        <!-- dedos -->
+        <ellipse cx="52" cy="60" rx="17" ry="20" transform="rotate(-14 52 60)"/>
+        <ellipse cx="82" cy="44" rx="12" ry="15" transform="rotate(-8 82 44)"/>
+        <ellipse cx="103" cy="46" rx="10.5" ry="13"/>
+        <ellipse cx="120" cy="54" rx="9" ry="11" transform="rotate(12 120 54)"/>
+        <ellipse cx="134" cy="68" rx="7.5" ry="9.5" transform="rotate(22 134 68)"/>
+        <!-- vincos -->
+        <path d="M46 148c22 9 48 8 66-3" stroke-width="3"/>
+        <path d="M52 250c14 6 30 6 44-1" stroke-width="3"/>
+      </svg>
+      <div style="display:flex;align-items:center;gap:9px">
+        <svg width="16" height="380" stroke="#f10769" stroke-width="3.5" fill="none">
+          <path d="M8 8v364"/><path d="M2 15l6-8 6 8"/><path d="M2 365l6 8 6-8"/></svg>
+        <span class="eixo">Comprimento</span>
+      </div>
+    </div>
+  </div>
+</body></html>

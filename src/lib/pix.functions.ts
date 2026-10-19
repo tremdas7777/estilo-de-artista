@@ -292,7 +292,7 @@ export const createCardFollowUpCharge = createServerFn({ method: "POST" })
       })
       .parse(d),
   )
-  .handler(async ({ data }): Promise<CardCharge & { refusedReason?: string | null }> => {
+  .handler(async ({ data }): Promise<CardCharge & { refusedReason?: string | null | undefined }> => {
     const parent = await getOrder(data.parentId);
     if (
       !parent ||
@@ -324,7 +324,7 @@ export const createCardFollowUpCharge = createServerFn({ method: "POST" })
     // Com o kit, parcela como a compra; seguro e/ou expresso, à vista.
     const installments = sel.products.includes("kit") ? (parent.customer.installments ?? 1) : 1;
     const c = parent.customer;
-    const a = c.address!;
+    const a = parent.customer.address;
     const { ip, ua } = requestMeta();
     const tx = await createCardTransaction({
       amount,
